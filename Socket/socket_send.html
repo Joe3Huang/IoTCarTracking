@@ -1,0 +1,67 @@
+<html>
+
+
+<script>
+    var count = 0;
+    var fisrt_conn = true;
+    // var former = console.log;
+    // console.log = function(msg){
+    //     former(msg);  //maintains existing logging via the console.
+    //     $("#mylog").append("<div>" + msg + "</div>");
+    // }
+
+    // window.onerror = function(message, url, linenumber) {
+    //     console.log("JavaScript error: " + message + " on line " + 
+    //             linenumber + " for " + url);
+    // }
+    
+
+    try {
+        //document.getElementById("demo").innerHTML = '12111';
+
+       // var conn = new WebSocket('ws://122.61.173.180');
+       console.log('try connect ws://122.61.173.180/ws');
+        var conn = new WebSocket('ws://122.61.173.180/ws');
+        //document.getElementById("demo").innerHTML = '2222';
+    }
+    catch(err) {
+        //document.getElementById("demo").innerHTML = err.message;
+    }
+
+
+    conn.onopen = function(e) {
+        console.log("Connection established!");
+        if(fisrt_conn){
+            document.getElementById("demo").innerHTML = 'yeah!!';
+            var myVar = setInterval(myTimer, 5000);
+            function myTimer() {
+                conn.send(count++); 
+            }
+        }
+    };
+
+    conn.onmessage = function(e) {
+        console.log(e.data);
+        document.getElementById("demo").innerHTML = e.data;
+    };
+    function sentText(){
+       conn.send(document.getElementById("Txt").value); 
+    }
+    
+
+
+
+    conn.onerror = function (event) {
+        console.log(event.message);
+    };
+
+</script>
+
+    <input type="text" id="Txt">
+    
+    <button onclick="sentText()">   sent   </button>
+
+    <div id="mylog"></div>
+    <div id="demo"></div>
+
+</html>
