@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-LABEL maintainer="Hasan Hasibul"
+LABEL maintainer=""
 
 RUN apt-get update \
     && apt-get install -y locales \

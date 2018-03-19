@@ -13,7 +13,7 @@ use MyApp\Chat;
             )
         ),
         34827,
-        'localhost'
+        '127.0.0.1'
     );
     echo 'Start the WsSocket server';
     $server->run();
