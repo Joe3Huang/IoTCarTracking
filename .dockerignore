@@ -6,7 +6,7 @@ Dockerfile
 .DS_Store
 .gitignore
 README.md
-env.*
+#env.*
 /devops/*
 
 # To prevent storing dev/temporary container data

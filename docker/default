@@ -79,13 +79,21 @@ server {
 
                 # Root for this sub project
                 root /var/www/html/WebServer/public;
-
+                #alias /var/www/html/WebServer/public;
                 # Rewrite $uri=/api/v1/xyz back to just $uri=/xyz
-                rewrite ^/WebServer/(.*)$ /$1 break;
+                #rewrite ^/WebServer/(.*)$ /$1 break;
+                #try_files $uri $uri/ /index.html last;
 
-                # Try to send static file at $url or $uri/
-                # Else try /index.php (which will hit location ~\.php$ below)
-                try_files $uri $uri/ /index.php?$args;
+                location ~ \.css$ {
+                        rewrite ^/WebServer/(.*)$ /$1 break;
+                        try_files $uri $uri/ last;  
+                }
+                location ~ \.js$ {
+                        rewrite ^/WebServer/(.*)$ /$1 break;
+                        try_files $uri $uri/ last;  
+                }
+                try_files $uri $uri/ /index.html last;
+                
         }
 
         location /Socket {

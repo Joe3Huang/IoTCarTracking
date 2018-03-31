@@ -15,11 +15,48 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['middleware' => ['auth:api', 'cors']], function () use ($router) {
+
+// $router->group(['middleware' => ['corss']], function () use ($router) {
+// 	$router->get('/test', function () use ($router) {
+// 		return "Hello World123";
+// 	});
+// });
+$router->get('/test', function () use ($router) {
+	return "Hello World123";
+});
+// route for creating access_token
+$router->post('accessToken', 'AccessTokenController@createAccessToken');
+
+
+$router->group(['middleware' => ['auth:api']], function () use ($router) {
     $router->get('users',  [
         'uses' => 'UserController@show'
-    ]);
+	]);
+
+	$router->get('userInfo',  [
+        'uses' => 'DeviceController@getCurrentUserInfo'
+	]);
+
 });
+
+$router->group(['middleware' => ['auth:api'], 'prefix' => 'device'], function () use ($router) {
+	
+	$router->get('userDevices',  [
+        'uses' => 'DeviceController@getAllTheDevices'
+	]);
+
+});
+
+// reset device stutes and clean random_link_code
+// @params device uid
+$router->group(['middleware' => ['cors'], 'prefix' => 'device'], function () use ($router) {
+	
+	$router->post('resetDevice',  [
+		'uses' => 'DeviceController@resetTheDevice'
+	]);
+
+});
+
 
 //$router->post('/oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
 

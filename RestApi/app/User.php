@@ -22,6 +22,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
 
      */
+
     protected $table='users';
 
     protected $fillable = [
@@ -38,6 +39,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'isActive'
     ];
 
+    protected $primarykey = 'uid';
+
+    public $incrementing = false;
+
     /**
      * The attributes excluded from the model's JSON form.
      *
@@ -53,5 +58,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return (isset($this->role) ? $this->role : self::BASIC_ROLE) == self::ADMIN_ROLE;
     }
+
     
 }

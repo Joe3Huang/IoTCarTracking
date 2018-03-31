@@ -2,17 +2,38 @@
 namespace MyApp;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
-use GuzzleHttp\Client;
-//require_once('UserConnection.php');
+
+//require 'Predis/Autoloader.php';
+
+//Predis\Autoloader::register();
+use Predis\Client as PredisClient;
 
 class Chat implements MessageComponentInterface {
     protected $clients;
 
     protected $callback;
 
+    protected $redisClient;
+
     public function __construct($stopCallback) {
         $this->clients = new \SplObjectStorage;
         $this->callback = $stopCallback;
+
+
+    //     var_dump($this->redisClient);
+
+        try {
+            $this->redisClient = new PredisClient([
+                'scheme' => 'tcp',
+                'host'   => '192.168.99.100',
+                'port'   => 6379,
+            ]);
+           
+        }
+        catch (Exception $e) {
+            die($e->getMessage());
+        }
+
     }
 
     public function onOpen(ConnectionInterface $conn) {
@@ -29,27 +50,46 @@ class Chat implements MessageComponentInterface {
 
         echo "SplObjectStorage nums of Obj ({$this->clients->count()})\n";
 
+
+
+
+       $this->redisClient->set('foo', 'bar');
+        $value = $this->redisClient->get('foo');
+        echo 'Redis ------------' , PHP_EOL;
+        echo $value , PHP_EOL;
+
+        
+     //   $this->redisClient->set('foo', 'bar');
+     //   $value = $this->redisClient->get('foo');
+        
+        // $this->redisClient->monitor(function($message) {
+        //     // This function will be called on message and on timeout
+        //     if (!isset($message)) {
+        //         echo 'No any message for 10 second... exit'. PHP_EOL;
+        //         // return <false> for stop monitoring and exit
+        //         return false;
+        //     }
+
+        //     echo 'monitor', PHP_EOL;
+        //     echo $message, PHP_EOL;
+        //     // return <true> for to wait next message
+        //     return true;
+        // });
+    
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
 
-        //$clientHttp = new Client();
-        // $res = $clientHttp->request('GET', 'localhost/RestApi', [
-
-        //  ]);
-        //  echo $res->getStatusCode();
-        //  echo $res->getHeader('content-type');
-        //  echo $res->getBody();
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => 'localhost/RestApi',
-            CURLOPT_USERAGENT => 'Test'
-        ));
-        $resp = curl_exec($curl);
-        echo $resp;
-        var_dump($resp);
-        curl_close($curl);
+        // $curl = curl_init();
+        // curl_setopt_array($curl, array(
+        //     CURLOPT_RETURNTRANSFER => 1,
+        //     CURLOPT_URL => 'localhost/RestApi',
+        //     CURLOPT_USERAGENT => 'Test'
+        // ));
+        // $resp = curl_exec($curl);
+        // echo $resp;
+        // var_dump($resp);
+        // curl_close($curl);
 
         $numRecv = count($this->clients) - 1;
         echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"

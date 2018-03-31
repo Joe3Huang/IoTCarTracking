@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Dingo\Api\Routing\Helpers;
 use App\Transformer\UserTransformer;
 use App\Repository\UserRepository;
-use Log;
+//use Log;
 
 class UserController extends Controller
 {

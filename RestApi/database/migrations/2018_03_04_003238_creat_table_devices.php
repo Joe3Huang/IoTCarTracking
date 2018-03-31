@@ -15,7 +15,7 @@ class CreatTableDevices extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->string('uid', 36)->unique();
-            $table->string('device_type', ['mobile_gps', 'admin'])->default('mobile_gps');
+            $table->enum('device_type', array('MOBILE_GPS', 'ADMIN'))->default('MOBILE_GPS');
             $table->string('name', '100')->nullable();
             $table->string('owner_uid', 36);
             $table->tinyInteger('isActive');

@@ -15,8 +15,17 @@ services:
       - .:/var/www/html
     networks:
       - restapi_docker
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 500000
+        hard: 500000
+    sysctls:
+      - net.core.somaxconn=1048576
   restapi-redis:
     image: redis:alpine
+    ports:
+      - "6379:6379"
     networks:
       - restapi_docker
   restapi-myadmin:
