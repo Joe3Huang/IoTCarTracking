@@ -1,24 +1,22 @@
 <template>
   <div class="login">
-    <router-link v-bind:to="'/'">Home</router-link>
-    <h1>{{ msg }}</h1>
-    <div>{{ this.$store.state.user }}</div>
-    <div class="login-wrapper border border-light">
-      <form class="form-signin" @submit.prevent="login">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="inputEmail" class="sr-only">Email address</label>
-        <input v-model="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-      </form>
-      <button class="btn btn-lg btn-primary btn-block" v-on:click='test()'>Test</button>
-    </div>
+      <form id="signin" class="navbar-form navbar-right form-inline" role="form" @submit.prevent="login">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input id="email" v-model="email" type="email" class="form-control" name="email" value="" placeholder="Email Address">
+        </div>
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+            <input id="password" v-model="password"  type="password" class="form-control" name="password" value="" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
   </div>
 </template>
 
 <script>
-import 'bootstrap/dist/css/bootstrap.css'
+
+// console.info('I' + icons.heart + ' Glyphicons!')
 export default {
   name: 'Login',
   data () {
@@ -32,19 +30,10 @@ export default {
     login () {
       console.log(this.email)
       console.log(this.password)
-      this.$store.dispatch('login', {email: this.email, password: this.password})
-      // this.$http.get('/device/userDevices')
-      //   .then((res) => {
-      //     console.log(res)
-      //   })
-      //   .catch((error) => {
-      //     console.log(error.response)
-      //   })
+      this.$store.dispatch('user/login', {email: this.email, password: this.password})
     },
     test () {
       this.$store.dispatch('rest', {})
-    },
-    created: function () {
     }
   }
 }
@@ -52,7 +41,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="css" scoped>
-.login {
+/* .login {
   width: 100%;
   height: 100%;
   background: #605B56;
@@ -96,5 +85,5 @@ export default {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-}
+} */
 </style>

@@ -6,8 +6,10 @@ Dockerfile
 .DS_Store
 .gitignore
 README.md
-#env.*
+# env.*
 /devops/*
+node_modules
+notes.docx
 
 # To prevent storing dev/temporary container data
 *.csv

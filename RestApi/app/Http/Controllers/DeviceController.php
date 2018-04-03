@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 use App\Repository\DeviceRepository;
+use Illuminate\Support\Facades\Auth;
 
 class DeviceController extends Controller
 {
@@ -24,14 +24,8 @@ class DeviceController extends Controller
     	
     }
 
-    public function getCurrentUserInfo(){
-        if (Auth::check()) {
-            return Auth::user();
-        }
-    }
-
     public function getAllTheDevices(){
-        return $this->deviceRepository->getAllDevicesByUid($this->getCurrentUserInfo()->uid);
+        return $this->deviceRepository->getAllDevicesByUid(Auth::user()->uid);
     }
 
     public function resetTheDevice(Request $request){

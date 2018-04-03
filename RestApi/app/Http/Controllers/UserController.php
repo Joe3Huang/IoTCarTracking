@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Dingo\Api\Routing\Helpers;
 use App\Transformer\UserTransformer;
 use App\Repository\UserRepository;
+use Illuminate\Support\Facades\Auth;
 //use Log;
 
 class UserController extends Controller
@@ -23,6 +24,11 @@ class UserController extends Controller
 
     }
 
+    public function getCurrentUserInfo(){
+        if (Auth::check()) {
+            return Auth::user();
+        }
+    }
 
     public function show(){
     	$users = $this->userRepository->getAll();

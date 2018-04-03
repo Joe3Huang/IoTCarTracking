@@ -34,7 +34,7 @@ $router->group(['middleware' => ['auth:api']], function () use ($router) {
 	]);
 
 	$router->get('userInfo',  [
-        'uses' => 'DeviceController@getCurrentUserInfo'
+        'uses' => 'UserController@getCurrentUserInfo'
 	]);
 
 });
