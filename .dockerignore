@@ -14,3 +14,7 @@ notes.docx
 # To prevent storing dev/temporary container data
 *.csv
 /tmp/*
+
+poster.jpg
+poster.bmp
+poster.png
