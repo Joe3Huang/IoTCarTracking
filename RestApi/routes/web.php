@@ -40,11 +40,14 @@ $router->group(['middleware' => ['auth:api']], function () use ($router) {
 });
 
 $router->group(['middleware' => ['auth:api'], 'prefix' => 'device'], function () use ($router) {
-	
 	$router->get('userDevices',  [
         'uses' => 'DeviceController@getAllTheDevices'
 	]);
-
+	// @params user uid	
+	// @params device uid	
+	$router->post('linkDevice',  [
+        'uses' => 'DeviceController@linkDeviceWithUser'
+	]);
 });
 
 // reset device stutes and clean random_link_code
@@ -54,7 +57,13 @@ $router->group(['middleware' => ['cors'], 'prefix' => 'device'], function () use
 	$router->post('resetDevice',  [
 		'uses' => 'DeviceController@resetTheDevice'
 	]);
+	$router->get('getDeviceByCode/{device_code}',  [
+        'uses' => 'DeviceController@getDeviceByCode'
+	]);
 
+	$router->post('updateDeviceDetails',  [
+		'uses' => 'DeviceController@updateDeviceDetails'
+	]);
 });
 
 

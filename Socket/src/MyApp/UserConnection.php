@@ -7,7 +7,7 @@ class UserConnection{
 
     public $conn;
 
-    public $userData;
+    public $userData = ['deviceId' => ''];
 
     public function __construct(ConnectionInterface $con) {
         $this->conn = $con;

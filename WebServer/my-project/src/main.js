@@ -9,10 +9,20 @@ import BootstrapVue from 'bootstrap-vue'
 import axios from './backend/vue-axios'
 import VueAxios from 'vue-axios'
 import store from './store'
+import VueNativeSock from 'vue-native-websocket'
+Vue.config.productionTip = false
+Vue.use(VueNativeSock, 'ws://192.168.99.100:8080/Socket', {
+  // store: store.socket,
+  format: 'json',
+  reconnection: true, // (Boolean) whether to reconnect automatically (false)
+  reconnectionAttempts: 5, // (Number) number of reconnection attempts before giving up (Infinity),
+  reconnectionDelay: 3000 // (Number) how long to initially wait before attempting a new (1000)
+})
+
 require('../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss')
 Vue.use(VueAxios, axios)
 Vue.use(BootstrapVue)
-Vue.config.productionTip = false
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

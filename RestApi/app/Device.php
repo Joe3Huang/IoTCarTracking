@@ -28,6 +28,7 @@ class Device extends Model
         'owner_uid',
         'isExpired',
         'random_link_ucode',
+        'device_code',
         'status',
         'expires_date'
     ];

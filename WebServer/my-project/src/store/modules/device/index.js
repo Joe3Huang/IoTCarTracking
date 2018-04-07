@@ -5,11 +5,17 @@ const defaultState = {
 }
 
 const getters = {
+  getUserDevices: (state) => {
+    return state.device
+  }
 }
 
 const mutations = {
   addDevices: function (state, deveices) {
     state.device = deveices
+  },
+  resetState: function (state) {
+    state.device = []
   }
 }
 
@@ -24,6 +30,21 @@ const actions = {
         console.log('getUserDevices')
         console.log(error.response)
       })
+  },
+  disconnectTheDevice: function (context, deviceId) {
+    axios.post('/device/resetDevice', {
+      device_uid: deviceId
+    })
+      .then(function (response) {
+        console.log(response.data)
+      })
+      .catch(function (error) {
+        console.log('disconnectTheDevice')
+        console.log(error.response)
+      })
+  },
+  rest: function (context) {
+    context.commit('resetState')
   }
 }
 

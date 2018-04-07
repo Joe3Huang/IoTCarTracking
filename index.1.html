@@ -5,7 +5,17 @@
     var count = 0;
     var fisrt_conn = true;
     var txtMessage = '';
-    var randomLinkUcode = '';
+    // var former = console.log;
+    // console.log = function(msg){
+    //     former(msg);  //maintains existing logging via the console.
+    //     $("#mylog").append("<div>" + msg + "</div>");
+    // }
+
+    // window.onerror = function(message, url, linenumber) {
+    //     console.log("JavaScript error: " + message + " on line " + 
+    //             linenumber + " for " + url);
+    // }
+
 
     try {
         //document.getElementById("demo").innerHTML = '12111';
@@ -25,28 +35,15 @@
         if (fisrt_conn) {
             document.getElementById("demo").innerHTML = 'yeah!!';
         }
-        let sendData = { 
-            command: 'AUTH',
-            send_to: 'ALL', 
-            device_type: 'MOBILE_GPS', 
-            device_code: '100006',
-            random_link_ucode: 'e162668a-3a2e-11e8-b9f1-0242ac150002',
-            message: '' 
-        }
-        conn.send(JSON.stringify(sendData));
     };
 
     conn.onmessage = function (e) {
         console.log(e.data);
         txtMessage = e.data + '<br>' + txtMessage;
         document.getElementById("demo").innerHTML = txtMessage;
-        let response = JSON.parse(e.data);
-        if(response.command == 'AUTH') {
-            response.message == 'OK';
-            randomLinkUcode = response.data.random_link_ucode;
-            ready();
-        }
     };
+
+
 
     conn.onerror = function (event) {
         console.log(event.message);
@@ -56,19 +53,6 @@
         conn.send(document.getElementById("Txt").value);
     }
 
-    function ready() {
-      window.setInterval(() => {
-        sendMessage();
-      }, 4000)
-    }
-    function sendMessage() {
-        console.log('sendMessage');
-        count++;
-        let position = { position: {latitude: -43 - count/1000, longitude: 172 + count/1000} }
-        let obj = { command: 'MESSAGE', send_to: '', device_type: 'MOBILE_GPS', device_code: '100006', random_link_code: randomLinkUcode, message: position };
-
-        conn.send(JSON.stringify(obj));
-    }
 
 </script>
 

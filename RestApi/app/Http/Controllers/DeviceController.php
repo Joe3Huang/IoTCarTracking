@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Repository\DeviceRepository;
 use Illuminate\Support\Facades\Auth;
-
+use App\Library\Services\UuidInterface;
 class DeviceController extends Controller
 {
 
@@ -14,11 +14,9 @@ class DeviceController extends Controller
     protected $deviceTransformer;
 
     public function __construct(DeviceRepository $deviceRepository){
-    	$this->deviceRepository = $deviceRepository;
+        $this->deviceRepository = $deviceRepository;
     //	$this->deviceTransformer = $deviceTransformer;
-
     }
-
 
     public function show(){
     	
@@ -29,8 +27,24 @@ class DeviceController extends Controller
     }
 
     public function resetTheDevice(Request $request){
-        $deviceUid = $request->input('uid');
+        $deviceUid = $request->input('device_uid');
         return $this->deviceRepository->resetDevice($deviceUid);
+    }
+
+    public function linkDeviceWithUser(Request $request){
+        $deviceUid = $request->input('device_id');
+        $UserUid = $request->input('user_id');
+        
+        return $this->deviceRepository->insertUserDeviceLink($UserUid, $deviceUid);
+    }
+
+    public function getDeviceByCode(Request $request, $device_code){
+        return $this->deviceRepository->getDeviceByCode($device_code);
+    }
+
+    public function updateDeviceDetails(Request $request){
+        // $deviceUid = $request->input('device_id');
+        return json_encode($this->deviceRepository->updateDevice($request));
     }
 
 }

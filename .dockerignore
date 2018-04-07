@@ -6,7 +6,7 @@ Dockerfile
 .DS_Store
 .gitignore
 README.md
-# env.*
+
 /devops/*
 node_modules
 notes.docx

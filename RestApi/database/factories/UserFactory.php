@@ -2,7 +2,7 @@
 
 $factory->define(App\User::class, function(Faker\Generator $faker){
 	return [
-		'uid'=> str_random(32),
+		'uid'=> uniqid(),
 		'first_name'=>$faker->firstName,
 		'last_name'=>$faker->lastName,
 		'email'=>$faker->email,

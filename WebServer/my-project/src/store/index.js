@@ -4,6 +4,7 @@ import createPersistedState from 'vuex-persistedstate'
 import * as Cookies from 'js-cookie'
 import userModule from './modules/user'
 import deviceModule from './modules/device'
+import socketModule from './modules/socket'
 Vue.use(Vuex)
 
 let store
@@ -12,7 +13,8 @@ const initStore = () => {
   return store || (store = new Vuex.Store({
     modules: {
       user: userModule,
-      device: deviceModule
+      device: deviceModule,
+      socket: socketModule
     },
     plugins: [createPersistedState({
       storage: {
