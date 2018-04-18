@@ -1,5 +1,8 @@
 <template>
-  <div class="google-map" v-bind:id="mapName"></div>
+  <div class="google-map">
+    <button v-on:click="findTheMarker(markers[0])">FindTheMarker</button>
+    <div class="google-map-view" v-bind:id="mapName"></div>
+  </div>
 </template>
 
 <script>
@@ -46,6 +49,7 @@ export default {
       const position = new google.maps.LatLng(coord.latitude, coord.longitude)
       const marker = new google.maps.Marker({position, map: this.map, title: coord.title})
       this.markers.push(marker)
+      console.log(this.markers)
       this.map.fitBounds(this.bounds.extend(position))
     })
   },
@@ -58,14 +62,15 @@ export default {
         if (newValue) {
           this.markerCoordinates[0].latitude = newValue.latitude
           this.markerCoordinates[0].longitude = newValue.longitude
-          this.markers[0].setPosition(new google.maps.LatLng(newValue.latitude, newValue.longitude))// = new google.maps.LatLng(newValue.latitude, newValue.longitude)
-          // this.map.fitBounds(this.bounds.extend(this.markers[0].position))
+          this.markers[0].setPosition(new google.maps.LatLng(newValue.latitude, newValue.longitude))
           console.log(this.markerCoordinates[0])
         }
       })
   },
   methods: {
-    set () {
+    findTheMarker: function (theMarker) {
+      let latLng = theMarker.getPosition() // returns LatLng object
+      this.map.setCenter(latLng)
     }
   }
 }
@@ -75,6 +80,11 @@ export default {
 .google-map {
   width: 100%;
   height: 900px;
+}
+
+.google-map-view {
+  width: 100%;
+  height: 100%;
   background: gray;
 }
 </style>

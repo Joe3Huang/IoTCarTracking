@@ -84,11 +84,20 @@ server {
                 #rewrite ^/WebServer/(.*)$ /$1 break;
                 #try_files $uri $uri/ /index.html last;
 
+                location ~* \.(eot|ttf|woff) {
+                    add_header Access-Control-Allow-Origin *;
+                    rewrite ^/WebServer/(.*)$ /$1 break;
+                    try_files $uri $uri/ last;  
+                }
                 location ~ \.css$ {
                         rewrite ^/WebServer/(.*)$ /$1 break;
                         try_files $uri $uri/ last;  
                 }
                 location ~ \.js$ {
+                        rewrite ^/WebServer/(.*)$ /$1 break;
+                        try_files $uri $uri/ last;  
+                }
+                location ~ \.(eot|ttf|woff)$ {
                         rewrite ^/WebServer/(.*)$ /$1 break;
                         try_files $uri $uri/ last;  
                 }

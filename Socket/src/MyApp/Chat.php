@@ -31,6 +31,12 @@ class Chat implements MessageComponentInterface {
 
     public function onOpen(ConnectionInterface $conn) {
         // Store the new connection to send messages to later
+
+       // var_dump($conn->WebSocket->request);
+       // echo '-----------onOpen----------------';
+       // var_dump($conn->WebSocket->request->getHeaders());
+       // echo '-----------onOpen----------------';
+       // var_dump($conn->WebSocket->request->getHeader('Authorization'));
         $theClient = new UserConnection($conn);
         $this->clients->attach($theClient);
         echo "New connection! ({$conn->resourceId})\n";
@@ -39,55 +45,59 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
+        echo $msg;
         $data = json_decode($msg);
+        echo '----------onMessage-------------', PHP_EOL;
+        // var_dump($data);
+        if (!is_object($data) || !property_exists($data, 'device_code')) {
+            return false;
+        }
         $device = Methods::curlGet('localhost/RestApi/device/getDeviceByCode/' . $data->device_code);
         if ($device == "FAIL") {
             $from->send(json_encode(['command' => 'AUTH', 'message'=> 'FAIL']));
-            $from->close();
             return '';
         }
         $device = $device[0];
+        $theClient = $this->getTheUserConn($from, $this->clients);
+        $theClient->userData['deviceId'] = $device->uid;
         switch ($data->command) {
             case 'AUTH':
-                $theClient = $this->getTheUserConn($from, $this->clients);
-                $theClient->userData['deviceId'] = $device->uid;
-                if ($data->device_type == 'BROWSER_ADMIN') {
-                    $from->send(json_encode(['command' => 'AUTH', 'message'=> 'OK']));
+                $this->authorization($theClient, $device, $data);
+                // if ($data->device_type == 'BROWSER_ADMIN') {
+                //     $from->send(json_encode(['command' => 'AUTH', 'message'=> 'OK']));
                                   
-                } else if ($data->device_type == 'MOBILE_GPS') {
-                    if ($device == "FAIL") {
-                        $from->close();
-                    }
-                    else if ($device->random_link_ucode) {
-                        if($device->random_link_ucode == $data->random_link_ucode) {
-                            $from->send(json_encode(['command' => 'AUTH', 'message'=> 'OK']));
-                        } else {
-                            $from->send(json_encode(['command' => 'AUTH', 'message'=> 'FAIL - the device has connected'])); 
-                            $from->close();                            
-                        }
-                    } 
-                    else 
-                    {
-                        try{
-                            if (!$device->random_link_ucode) {
-                                $device->random_link_ucode = Methods::uuid();
-                                $resp = Methods::curlPost('localhost/RestApi/device/updateDeviceDetails/', $device);
-                                if ( $resp == 'OK') {
-                                    $updatedDate = json_encode(['command' => 'AUTH', 'message'=> 'DEVICE-OK', 'data'=>$device]);
-                                    $from->send($updatedDate); 
-                                    $this->groupMessage($updatedDate, [$device->owner_uid]);
-                                }
-                            }   
-                        } catch (exception $e){
-                            $from->send(json_encode(['command' => 'AUTH', 'message'=> 'fail to connect'])); 
-                            $from->close(); 
-                        }
-                    }
-                }
+                // } else if ($data->device_type == 'MOBILE_GPS') {
+                //     if ($device->random_link_ucode) {
+                //         if($device->random_link_ucode == $data->random_link_ucode) {
+                //             $from->send(json_encode(['command' => 'AUTH', 'message'=> 'OK']));
+                //         } else {
+                //             $from->send(json_encode(['command' => 'AUTH', 'message'=> 'FAIL - the device has connected'])); 
+                //             // $from->close();                            
+                //         }
+                //     } 
+                //     else 
+                //     {
+                //         try{
+                //             if (!$device->random_link_ucode) {
+                //                 $device->random_link_ucode = Methods::uuid();
+                //                 $resp = Methods::curlPost('localhost/RestApi/device/updateDeviceDetails/', $device);
+                //                 if ( $resp == 'OK') {
+                //                     $updatedDate = json_encode(['command' => 'AUTH', 'message'=> 'DEVICE-OK', 'data'=>$device]);
+                //                     $from->send($updatedDate); 
+                //                     $this->groupMessage($updatedDate, [$device->owner_uid]);
+                //                 }
+                //             }   
+                //         } catch (exception $e){
+                //             $from->send(json_encode(['command' => 'AUTH', 'message'=> 'fail to connect'])); 
+                //         }
+                //     }
+                // }
                 break;
             case 'MESSAGE':
-                if ($data->device_type == 'MOBILE_GPS') {
-                    $this->groupMessage($msg, [$device->owner_uid]);
+                if($theClient->userData['bIsAuthorized']) {
+                    if ($data->device_type == 'MOBILE_GPS') {
+                        $this->groupMessage($msg, [$device->owner_uid]);
+                    }                    
                 }
 
                 break;
@@ -149,6 +159,52 @@ class Chat implements MessageComponentInterface {
                 if($client->userData['deviceId'] == $id) {
                     $client->conn->send($message);
                 }
+            }
+        }
+    }
+
+    private function authorization ($theClient, $device, $data) {
+        if ($data->device_type == 'BROWSER_ADMIN') {
+            $this->browserUserAuthorization($theClient, $device, $data);         
+        } else if ($data->device_type == 'MOBILE_GPS') {
+            $this->deviceAuthorization($theClient, $device, $data);
+        }
+    }
+
+    private function browserUserAuthorization($theClient, $device, $data) {
+        $theClient->conn->send(json_encode(['command' => 'AUTH', 'message'=> 'OK']));
+        $theClient->userData['bIsAuthorized'] = true;
+    }
+
+    private function deviceAuthorization($theClient, $device, $data) {
+        if ($device->random_link_ucode) {
+            if($device->random_link_ucode == $data->random_link_ucode) {
+                $theClient->conn->send(json_encode(['command' => 'AUTH', 'message'=> 'OK']));
+                $theClient->userData['bIsAuthorized'] = true;
+            } else {
+                $theClient->conn->send(json_encode(['command' => 'AUTH', 'message'=> 'FAIL - the device has connected']));
+                $theClient->userData['bIsAuthorized'] = false; 
+                // $from->close();                            
+            }
+        } 
+        else 
+        {
+            try{
+                if (!$device->random_link_ucode) {
+                    $device->random_link_ucode = Methods::uuid();
+                    $resp = Methods::curlPost('localhost/RestApi/device/updateDeviceDetails/', $device);
+                    if ( $resp == 'OK') {
+                        $updatedDate = json_encode(['command' => 'AUTH', 'message'=> 'DEVICE-OK', 'data'=>$device]);
+                        $theClient->conn->send($updatedDate); 
+                        $this->groupMessage($updatedDate, [$device->owner_uid]);
+                        $theClient->userData['bIsAuthorized'] = true;
+                    } else {
+                        $theClient->userData['bIsAuthorized'] = true;
+                    }
+                }   
+            } catch (exception $e){
+                $ $theClient->conn->send(json_encode(['command' => 'AUTH', 'message'=> 'fail to connect']));
+                $theClient->userData['bIsAuthorized'] = false; 
             }
         }
     }

@@ -30,7 +30,7 @@
             send_to: 'ALL', 
             device_type: 'MOBILE_GPS', 
             device_code: '100006',
-            random_link_ucode: 'e162668a-3a2e-11e8-b9f1-0242ac150002',
+            random_link_ucode: '8753f3ac-3b23-11e8-ab28-0242ac150002',
             message: '' 
         }
         conn.send(JSON.stringify(sendData));
@@ -43,7 +43,8 @@
         let response = JSON.parse(e.data);
         if(response.command == 'AUTH') {
             response.message == 'OK';
-            randomLinkUcode = response.data.random_link_ucode;
+            if(response.hasOwnProperty('data'))
+                randomLinkUcode = response.data.random_link_ucode;
             ready();
         }
     };
@@ -59,12 +60,12 @@
     function ready() {
       window.setInterval(() => {
         sendMessage();
-      }, 4000)
+      }, 1000)
     }
     function sendMessage() {
         console.log('sendMessage');
         count++;
-        let position = { position: {latitude: -43 - count/1000, longitude: 172 + count/1000} }
+        let position = { position: {latitude: -43.4 - count/1000, longitude: 172.5 + count/50000} }
         let obj = { command: 'MESSAGE', send_to: '', device_type: 'MOBILE_GPS', device_code: '100006', random_link_code: randomLinkUcode, message: position };
 
         conn.send(JSON.stringify(obj));
@@ -74,7 +75,7 @@
 
 <input type="text" id="Txt">
 
-<button onclick="sentText()"> sent </button>
+<button onclick="sentText()"> sent xxxxxxxxxxxx</button>
 
 <div id="mylog"></div>
 <div id="demo"></div>

@@ -1,4 +1,5 @@
 import axios from './../../../backend/vue-axios'
+import * as Cookies from 'js-cookie'
 
 const defaultState = {
   userName: '',
@@ -50,6 +51,7 @@ const actions = {
     })
       .then(function (response) {
         context.commit('addWebToken', response.data.access_token) // pass the webtoken as payload to the mutation
+        Cookies.set('access_token', response.data.access_token, { expires: 7 })
       })
       .catch(function (error) {
         console.log(error.response)

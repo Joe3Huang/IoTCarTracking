@@ -1,0 +1,22 @@
+@import "nativescript-theme-core/css/sky.css";
+@keyframes spin {
+    from { transform: rotate(0); }
+    to { transform: rotate(360); }
+  }
+  Image {
+    width: 20px;
+    height: auto;
+    /* animation-name: spin; 
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear; */
+  }
+
+  Page {
+    background-color: white;
+    font-size: 15;
+  }
+  TextField {
+    padding: 10;
+    font-size: 13;
+  }

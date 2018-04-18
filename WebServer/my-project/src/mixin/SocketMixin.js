@@ -36,7 +36,7 @@ const socketMixin = {
       }, 1000)
     },
     sendObj: function (obj) {
-      this.heartBeatCount = 4
+      this.heartBeatCount = 5
       this.$socket.sendObj(obj)
     },
     heartBeat: function () {

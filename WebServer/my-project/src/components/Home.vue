@@ -24,7 +24,7 @@
     </nav>
     <device v-if="this.bShowDevices"></device>
     <div class="map">
-        <google-map name="example"> </google-map>
+        <google-map name="example" ref="googleMap"> </google-map>
     </div>
   </div>
 </template>
@@ -35,6 +35,7 @@ import Login from '@/components/Login'
 import Device from '@/components/Device'
 import axios from './../backend/vue-axios'
 import socketMixin from './../mixin/SocketMixin'
+import * as Cookies from 'js-cookie'
 export default {
   name: 'Home',
   mixins: [ socketMixin ],
@@ -48,6 +49,7 @@ export default {
     console.log('Nothing gets called before me!')
   },
   created () {
+    this.getLocalToken()
     if (this.$store.getters['user/isLoggedin']) {
       this.logininToDO()
     }
@@ -81,6 +83,12 @@ export default {
       // this.$socket.send({awesome: 'data'})
       // or with {format: 'json'} enabled
       this.$socket.sendObj({awesome: 'data'})
+    },
+    getLocalToken: function () {
+      let oldToken = Cookies.get('access_token')
+      if (oldToken) {
+        this.$store.commit('user/addWebToken', oldToken)
+      }
     }
   },
   components: {
