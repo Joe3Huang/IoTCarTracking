@@ -2,26 +2,44 @@ import { Injectable, NgZone} from "@angular/core";
 import { Config } from "../interfaces/config.interface";
 import { WebsocketData } from "../interfaces/websocket.data.interface";
 import { Observable } from "rxjs/observable"
+import { Store } from "@ngrx/store";
+import { SETDEVICECODE, SETRUCODE  } from "./../../store/socket.reducer";
+import { AppState  } from "./../../store/store.interface";
 
+Store
 let config: Config = require('./../config.json');
 // require("nativescript-websockets");
 require( "nativescript-localstorage" );
 var WS = require('nativescript-websockets');
 @Injectable()
-export class WebsocketService{
+export class WebsocketService {
     private static _instance: WebsocketService;
     private socket: any;
     public reconnectCount: number = 0;
     public messages: Array<any> = [];
     public sendData:WebsocketData;
-    private deviceCode: String = localStorage.getItem('device_code');
-    private randomLinkUcode: String = localStorage.getItem('random_link_ucode');
+    private deviceCode: String;
+    private randomLinkUcode: String;
     private reconnectTimer;
-    constructor() { //private zone: NgZone
+    constructor(private store:Store<AppState>) { //private zone: NgZone
         if(WebsocketService._instance){
             throw new Error("Error: Instantiation failed: Use WebsocketService.Instance instead of new.");
         }
         console.log("websockets----");
+        this.store.dispatch({ type: SETDEVICECODE, payload: localStorage.getItem('device_code')});
+        this.store.dispatch({ type: SETRUCODE, payload: localStorage.getItem('random_link_ucode')});
+        console.log("payload----");
+        this.store.select(function (s) { return s; }).subscribe(function (res) { return console.dir(res); });
+        console.dir({wqe:{qqq:234}});
+        // this.store.select(s => s.socket).subscribe(
+        //     (data)=>{ 
+        //         console.log('do my thing', data); // Got the thing
+        //         // self.deviceCode = data.deviceCode;
+        //         console.dir(data);
+        //      }
+        // );
+        console.log('--------this.deviceCode------', this.deviceCode);
+        console.log('--------this.deviceCode???------', this.deviceCode);
         this.connect();
     }
 
@@ -105,9 +123,9 @@ export class WebsocketService{
         this.socket.send(JSON.stringify(sendData));
     }
 
-    public static get Instance()
+    public static Instance(store: Store<AppState>)
     {
         // Do you need arguments? Make it a regular method instead.
-        return this._instance || (this._instance = new this());
+        return this._instance || (this._instance = new this(store));
     }
 }

@@ -30,7 +30,7 @@
             send_to: 'ALL', 
             device_type: 'MOBILE_GPS', 
             device_code: '100006',
-            random_link_ucode: '8753f3ac-3b23-11e8-ab28-0242ac150002',
+            random_link_ucode: 'd1889c5a-4ad4-11e8-bdfb-0242ac150002',
             message: '' 
         }
         conn.send(JSON.stringify(sendData));
@@ -42,10 +42,11 @@
         document.getElementById("demo").innerHTML = txtMessage;
         let response = JSON.parse(e.data);
         if(response.command == 'AUTH') {
-            response.message == 'OK';
-            if(response.hasOwnProperty('data'))
+            if(response.message.indexOf('OK') > -1) {
+                if(response.hasOwnProperty('data'))
                 randomLinkUcode = response.data.random_link_ucode;
-            ready();
+                ready();               
+            }
         }
     };
 
@@ -62,6 +63,7 @@
         sendMessage();
       }, 1000)
     }
+
     function sendMessage() {
         console.log('sendMessage');
         count++;
@@ -71,13 +73,76 @@
         conn.send(JSON.stringify(obj));
     }
 
+    function sendAuth() {
+        //conn.send(document.getElementById("Txt").value);
+        console.log('xxxauth');
+        let sendData = { 
+            command: 'AUTH',
+            send_to: 'ALL', 
+            device_type: 'MOBILE_GPS', 
+            device_code: document.getElementById("Txt").value,
+            random_link_ucode: '8753f3ac-3b23-11e8-ab28-0242ac150002',
+            message: '' 
+        }
+        console.log(sendData);
+        conn.send(JSON.stringify(sendData));
+    }
+
 </script>
 
-<input type="text" id="Txt">
 
-<button onclick="sentText()"> sent xxxxxxxxxxxx</button>
+<body>
+
+<h3>GPS Device faker</h3>
+
+<div>
+  <form action="">
+    <label for="fname"> </label>
+    <input type="text" id="fname" id="Txt" name="Device Code" placeholder="Your code..">
+    <input type="button" value="Submit" onclick="sendAuth()">
+  </form>
+</div>
+
+
+<!-- <input type="text" id="Txt">
+
+<button onclick="sentText()"> sent xxxxxxxxxxxx</button> -->
 
 <div id="mylog"></div>
 <div id="demo"></div>
 
+
+    <style>
+        input[type=text], select {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        input[type=button] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        input[type=button]:hover {
+            background-color: #45a049;
+        }
+        
+        div {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+            width: 50%;
+        }
+    </style>
 </html>

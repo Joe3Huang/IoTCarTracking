@@ -43,7 +43,6 @@ class DeviceController extends Controller
     }
 
     public function updateDeviceDetails(Request $request){
-        // $deviceUid = $request->input('device_id');
         return json_encode($this->deviceRepository->updateDevice($request));
     }
 

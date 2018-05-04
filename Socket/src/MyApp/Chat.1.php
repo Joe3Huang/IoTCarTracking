@@ -14,9 +14,29 @@ class Chat implements MessageComponentInterface {
     public function __construct($stopCallback) {
         $this->clients = new \SplObjectStorage;
         $this->callback = $stopCallback;
+    //     var_dump($this->redisClient);
+    //     try {
+    //         $this->redisClient = new PredisClient([
+    //             'scheme' => 'tcp',
+    //             'host'   => '192.168.99.100',
+    //             'port'   => 6379,
+    //         ]);
+           
+    //     }
+    //     catch (Exception $e) {
+    //         die($e->getMessage());
+    //     }
+
     }
 
     public function onOpen(ConnectionInterface $conn) {
+        // Store the new connection to send messages to later
+
+       // var_dump($conn->WebSocket->request);
+       // echo '-----------onOpen----------------';
+       // var_dump($conn->WebSocket->request->getHeaders());
+       // echo '-----------onOpen----------------';
+       // var_dump($conn->WebSocket->request->getHeader('Authorization'));
         $theClient = new UserConnection($conn);
         $this->clients->attach($theClient);
         echo "New connection! ({$conn->resourceId})\n";
@@ -43,6 +63,35 @@ class Chat implements MessageComponentInterface {
         switch ($data->command) {
             case 'AUTH':
                 $this->authorization($theClient, $device, $data);
+                // if ($data->device_type == 'BROWSER_ADMIN') {
+                //     $from->send(json_encode(['command' => 'AUTH', 'message'=> 'OK']));
+                                  
+                // } else if ($data->device_type == 'MOBILE_GPS') {
+                //     if ($device->random_link_ucode) {
+                //         if($device->random_link_ucode == $data->random_link_ucode) {
+                //             $from->send(json_encode(['command' => 'AUTH', 'message'=> 'OK']));
+                //         } else {
+                //             $from->send(json_encode(['command' => 'AUTH', 'message'=> 'FAIL - the device has connected'])); 
+                //             // $from->close();                            
+                //         }
+                //     } 
+                //     else 
+                //     {
+                //         try{
+                //             if (!$device->random_link_ucode) {
+                //                 $device->random_link_ucode = Methods::uuid();
+                //                 $resp = Methods::curlPost('localhost/RestApi/device/updateDeviceDetails/', $device);
+                //                 if ( $resp == 'OK') {
+                //                     $updatedDate = json_encode(['command' => 'AUTH', 'message'=> 'DEVICE-OK', 'data'=>$device]);
+                //                     $from->send($updatedDate); 
+                //                     $this->groupMessage($updatedDate, [$device->owner_uid]);
+                //                 }
+                //             }   
+                //         } catch (exception $e){
+                //             $from->send(json_encode(['command' => 'AUTH', 'message'=> 'fail to connect'])); 
+                //         }
+                //     }
+                // }
                 break;
             case 'MESSAGE':
                 if($theClient->userData['bIsAuthorized']) {
@@ -50,6 +99,7 @@ class Chat implements MessageComponentInterface {
                         $this->groupMessage($msg, [$device->owner_uid]);
                     }                    
                 }
+
                 break;
             case 'HEARTBEAT':
 
@@ -57,6 +107,21 @@ class Chat implements MessageComponentInterface {
             break;
             default:
         }
+    //    echo '-----------------------', PHP_EOL;
+    //     $numRecv = count($this->clients) - 1;
+    //     echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
+    //         , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
+    //     // $from->send($from->resourceId.'-- : '. $msg);
+    //     foreach ($this->clients as $client) {
+    //         if ($from !== $client->conn) {
+    //             // The sender is not the receiver, send to each client connected
+    //             $client->conn->send(sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
+    //             , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's'));
+    //         }
+    //     }
+        // if($msg == 'stopServer'){
+        //     call_user_func($this->callback);
+        // }
     }
 
     public function onClose(ConnectionInterface $conn) {
@@ -118,7 +183,8 @@ class Chat implements MessageComponentInterface {
                 $theClient->userData['bIsAuthorized'] = true;
             } else {
                 $theClient->conn->send(json_encode(['command' => 'AUTH', 'message'=> 'FAIL - the device has connected']));
-                $theClient->userData['bIsAuthorized'] = false;                        
+                $theClient->userData['bIsAuthorized'] = false; 
+                // $from->close();                            
             }
         } 
         else 

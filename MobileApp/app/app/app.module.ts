@@ -7,16 +7,28 @@ import { NativeScriptHttpModule } from "nativescript-angular/http";
 // import { NativeScriptDevToolsMonitors } from "ngrx-devtools-nativescript";
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
-import { StoreModule } from '@ngrx/store';
-import { counterReducer } from "./reducers/counter.reducer";
+import { StoreModule, ActionReducer, ActionReducerMap, combineReducers } from '@ngrx/store';
+import { counterReducer } from "./store/counter.reducer";
+import { socketReducer } from "./store/socket.reducer";
 
 import { routes, navigatableComponents } from "./app.routing";
 import { AppComponent } from "./app.component";
+import { AppState } from "./store/store.interface";
+// const reducers = {
+//   counter: counterReducer,
+//   socket: socketReducer
+// };
+const reducers = {
+  counter: counterReducer,
+  socket: socketReducer
+};
+// const reducer: ActionReducer<UserState> = combineReducers(reducers);
+
 @NgModule({
   imports: [
     NativeScriptModule,
     // NativeScriptDevToolsMonitors,
-    StoreModule.forRoot({ counter: counterReducer }),
+    StoreModule.forRoot(reducers),
     StoreDevtoolsModule.instrument(),
     NativeScriptFormsModule,
     NativeScriptHttpModule,

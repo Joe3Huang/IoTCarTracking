@@ -5,11 +5,9 @@ import { Component } from "@angular/core";
 import { WebsocketService } from "../../shared/websocket/websocket.service";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs/Observable";
-import { INCREMENT, DECREMENT, RESET } from "./../../reducers/counter.reducer";
+import { INCREMENT, DECREMENT, RESET } from "./../../store/counter.reducer";
+import { AppState } from "./../../store/store.interface";
 
-interface AppState {
-    counter: number;
-}
 
 @Component({
     selector: "login",
@@ -26,7 +24,7 @@ export class LoginComponent {
     counter$: Observable<number>;
     constructor(private store: Store<AppState>) {
         // page.actionBarHidden = true;
-        this.webSocket = WebsocketService.Instance;
+        this.webSocket = WebsocketService.Instance(this.store);
         this.counter$ = store.select(s => s.counter);
     }
 
