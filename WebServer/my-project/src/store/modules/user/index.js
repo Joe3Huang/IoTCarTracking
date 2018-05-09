@@ -68,10 +68,11 @@ const actions = {
     context.commit('addUid', uid)
   },
   getTheUserInfo: function (context) {
-    axios.get('/userInfo')
+    return axios.get('/userInfo')
       .then(function (response) {
         console.log(response)
         context.commit('addUid', response.data.uid)
+        return response
       })
       .catch(function (error) {
         console.log('rest')

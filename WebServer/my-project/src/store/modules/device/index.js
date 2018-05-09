@@ -1,30 +1,47 @@
 import axios from './../../../backend/vue-axios'
 
 const defaultState = {
-  device: []
+  devices: []
 }
 
 const getters = {
   getUserDevices: (state) => {
-    return state.device
+    return state.devices
   }
 }
 
 const mutations = {
-  addDevices: function (state, deveices) {
-    state.device = deveices
+  ADD_DEVICES: function (state, deveices) {
+    state.devices = deveices
   },
   resetState: function (state) {
-    state.device = []
+    state.devices = []
+  },
+  SET_DEVICE_DATA: function (state, layload) {
+    let theDevice = state.devices.find(function (d) {
+      return d.device_code == layload.device_code
+    })
+    if (theDevice) {
+      Object.assign(theDevice, layload)
+    }
   }
+  // SET_DEVICE_CLOSE: function (state, layload) {
+  //   let theDevice = state.devices.find(function (d) {
+  //     return d.device_code == layload.device_code
+  //   })
+  //   if (theDevice) {
+  //     Object.assign(theDevice, layload)
+  //   }
+  // },
 }
 
 const actions = {
   getUserDevices: function (context) {
-    axios.get('/device/userDevices')
+    return axios.get('/device/userDevices')
       .then(function (response) {
         console.log(response)
-        context.commit('addDevices', response.data)
+        context.commit('ADD_DEVICES', response.data)
+        return response
       })
       .catch(function (error) {
         console.log('getUserDevices')

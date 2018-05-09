@@ -40,6 +40,8 @@ class Chat implements MessageComponentInterface {
         $device = $device[0];
         $theClient = $this->getTheUserConn($from, $this->clients);
         $theClient->userData['deviceId'] = $device->uid;
+        $theClient->userData['deviceOwnerId'] = $device->owner_uid;
+        $theClient->userData['deviceCode'] = $device->device_code;
         switch ($data->command) {
             case 'AUTH':
                 $this->authorization($theClient, $device, $data);
@@ -52,9 +54,7 @@ class Chat implements MessageComponentInterface {
                 }
                 break;
             case 'HEARTBEAT':
-
-
-            break;
+                break;
             default:
         }
     }
@@ -62,6 +62,7 @@ class Chat implements MessageComponentInterface {
     public function onClose(ConnectionInterface $conn) {
         // The connection is closed, remove it, as we can no longer send it messages
        $theClient =  $this->getTheUserConn($conn, $this->clients);
+       $this->groupMessage(json_encode(['command' => 'CLOSE', 'message'=> ['data' => $theClient->userData]]), [$theClient->userData['deviceOwnerId']]);
        if($theClient){
             $this->clients->detach($theClient);
        }
@@ -88,7 +89,7 @@ class Chat implements MessageComponentInterface {
         return null;
     }
 
-    private function groupMessage(String $message, Array $deviceIds) {
+    private function groupMessage(String $message, Array $deviceIds) { 
         foreach ($this->clients as $client) {
             foreach ($deviceIds as $id) {
                 if($client->userData['deviceId'] == $id) {

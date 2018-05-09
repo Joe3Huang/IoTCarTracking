@@ -1,27 +1,54 @@
 const socketMixin = {
   data () {
     return {
-      heartBeatCount: 4
+      heartBeatCount: 4,
+      browserData: {}
     }
   },
   created () {
+    this.$store.watch(
+      (state) => {
+        return {data: this.$store.getters['socket/getBrowserUserData'], isConnected: this.$store.getters['socket/isConnected']}// could also put a Getter here
+      },
+      (newValue, oldValue) => {
+        if (newValue) {
+          console.log(newValue)
+          if (newValue.isConnected) {
+            this.browserData = newValue.data
+            this.sendObj({ command: 'AUTH', send_to: 'ALL', device_type: this.browserData.device_type, device_code: this.browserData.device_code, random_link_code: this.browserData.random_link_code, message: '' })
+            console.log(this.browserData)
+          }
+        }
+      })
     this.$options.sockets.onopen = (data) => {
       console.log(data)
-      this.sendObj({ command: 'AUTH', send_to: 'ALL', device_type: 'BROWSER_ADMIN', device_code: '100013', random_link_code: 'ed9f87fe4b804d098db258f3e6f79574', message: '' })
+      // this.$store.getters['socket/getBrowserUserData']
+      this.$store.commit('socket/SOCKET_ONOPEN')
+      this.ready()
     }
     this.$options.sockets.onmessage = (data) => {
       this.heartBeatCount = 5
-      console.log(data.data)
       let resp = JSON.parse(data.data)
-      console.log(resp)
-      if (resp.message.position) {
-        this.$store.commit('socket/SET_POSITION', resp.message.position)
+      // console.log('--------------onmessage---------------', resp)
+      if (this.$store.getters['socket/isAuthenticated']) {
+        if (resp.message.position) {
+          let payload = Object.assign(resp.message.position, {device_code: resp.device_code, name: resp.message.name})
+          this.$store.commit('socket/SET_DEVICE_DATA', payload)
+          this.$store.commit('device/SET_DEVICE_DATA', payload)
+        }
       }
       if (resp.command == 'AUTH') {
         if (resp.message === 'OK') {
-          this.ready()
+          // this.ready()
+          this.$store.commit('socket/SET_AUTH_TRUE')
           console.log('--------------ready---------------')
         }
+      }
+      if (resp.command == 'CLOSE') {
+        let payload = {device_code: resp.message.data.deviceCode, command: resp.command}
+        // let payload = Object.assign(resp.message.data, { command: resp.command })
+        console.log(payload)
+        this.$store.commit('socket/SET_DEVICE_DATA', payload)
       }
     }
   },
@@ -40,7 +67,16 @@ const socketMixin = {
       this.$socket.sendObj(obj)
     },
     heartBeat: function () {
-      this.sendObj({ command: 'HEARTBEAT', send_to: '', device_type: 'BROWSER_ADMIN', device_code: '100013', random_link_code: 'ed9f87fe4b804d098db258f3e6f79574', message: '' })
+      console.log('-----------------------------heartBeat----------------')
+      // this.sendObj({ command: 'HEARTBEAT', send_to: '', device_type: '', device_code: '', random_link_code: '', message: '' })
+      this.sendObj({
+        command: 'HEARTBEAT',
+        send_to: 'ALL',
+        device_type: this.browserData.device_type,
+        device_code: this.browserData.device_code,
+        random_link_code: this.browserData.random_link_code,
+        message: ''
+      })
     }
   }
 }

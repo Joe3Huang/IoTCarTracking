@@ -9,7 +9,9 @@ class UserConnection{
 
     public $userData = [
         'deviceId' => '',
-        'bIsAuthorized' => ''
+        'bIsAuthorized' => '',
+        'deviceOwnerId' => '',
+        'deviceCode' => ''
     ];
 
     public function __construct(ConnectionInterface $con) {

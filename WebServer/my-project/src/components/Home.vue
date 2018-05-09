@@ -11,14 +11,14 @@
                     <a class="nav-link" href="#" v-on:click="bShowDevices = !bShowDevices">Devices</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Logout</a>
+                    <a class="nav-link" href="#" v-on:click="test()">Logout</a>
                 </li>
                 <li class="nav-item" v-if="!this.$store.getters['user/isLoggedin']">
                     <login></login>
                 </li>
-                <li class="nav-item" >
+                <!-- <li class="nav-item" >
                     <button v-on:click="test()">Clean Cache data</button>
-                </li>
+                </li> -->
             </ul>
         </div>
     </nav>
@@ -72,16 +72,23 @@ export default {
     test () {
       this.$store.dispatch('user/rest', {})
       this.$store.dispatch('device/rest', {})
+      this.$store.dispatch('socket/rest', {})
+      Cookies.set('access_token', '', { expires: 7 })
     },
     logininToDO () {
       axios.defaults.headers['Authorization'] = 'Bearer ' + this.$store.getters['user/getToken']
-      this.$store.dispatch('user/getTheUserInfo')
-      this.$store.dispatch('device/getUserDevices')
+      Promise.all([ this.$store.dispatch('user/getTheUserInfo'), this.$store.dispatch('device/getUserDevices') ])
+        .then(results => {
+          console.log('Hello')
+          console.log(results)
+          let browserDeviceData = results[1].data.find(function (device) { return device.device_type == 'BROWSER_ADMIN' })
+          this.$store.commit('socket/SET_BROWSERUSER_DATA', browserDeviceData)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     socketTest: function () {
-      // $socket is [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket) instance
-      // this.$socket.send({awesome: 'data'})
-      // or with {format: 'json'} enabled
       this.$socket.sendObj({awesome: 'data'})
     },
     getLocalToken: function () {
