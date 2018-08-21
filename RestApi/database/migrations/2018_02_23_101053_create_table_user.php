@@ -19,8 +19,8 @@ class CreateTableUser extends Migration
             $table->string('last_name');
             $table->string('email');
             $table->string('password');
-            $table->string('city');
-            $table->integer('status');
+            $table->string('city')->nullable();
+            $table->integer('status')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

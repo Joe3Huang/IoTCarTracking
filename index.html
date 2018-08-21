@@ -2,6 +2,7 @@
 
 
 <script>
+    // console.log(process.env.APP_NAME)
     var count = 0;
     var fisrt_conn = true;
     var txtMessage = '';
@@ -10,8 +11,8 @@
     try {
         //document.getElementById("demo").innerHTML = '12111';
 
-        // var conn = new WebSocket('ws://122.61.173.180');
-        console.log('try connect ws://192.168.99.100:8080/Socket');
+       // var conn = new WebSocket('ws://35.197.110.192/Socket');
+        //console.log('try connect ws://192.168.99.100:8080/Socket');
         var conn = new WebSocket('ws://192.168.99.100:8080/Socket');
         //document.getElementById("demo").innerHTML = '2222';
     }
@@ -25,15 +26,15 @@
         if (fisrt_conn) {
             document.getElementById("demo").innerHTML = 'yeah!!';
         }
-        let sendData = { 
-            command: 'AUTH',
-            send_to: 'ALL', 
-            device_type: 'MOBILE_GPS', 
-            device_code: '100006',
-            random_link_ucode: '73a3a6fa-535a-11e8-aea1-0242ac150002',
-            message: '' 
-        }
-        conn.send(JSON.stringify(sendData));
+        // let sendData = { 
+        //     command: 'AUTH',
+        //     send_to: 'ALL', 
+        //     device_type: 'MOBILE_GPS', 
+        //     device_code: '100022',
+        //     random_link_ucode: '87f8e092-6972-11e8-a543-0242ac130002',
+        //     message: '' 
+        // }
+        // conn.send(JSON.stringify(sendData));
     };
 
     conn.onmessage = function (e) {
@@ -44,7 +45,7 @@
         if(response.command == 'AUTH') {
             if(response.message.indexOf('OK') > -1) {
                 if(response.hasOwnProperty('data'))
-                randomLinkUcode = response.data.random_link_ucode;
+                    randomLinkUcode = response.data.random_link_ucode;
                 ready();               
             }
         }
@@ -55,13 +56,9 @@
     };
 
     conn.onclose = function (event) {
-        let obj = { command: 'MESSAGE', send_to: '', device_type: 'MOBILE_GPS', device_code: '100006', random_link_code: randomLinkUcode, message: {txg:"CLOSE"} };
+        let obj = { command: 'MESSAGE', send_to: '', device_type: 'MOBILE_GPS', device_code: document.getElementById("Txt").value, random_link_code: randomLinkUcode, message: {txg:"CLOSE"} };
         conn.send(JSON.stringify(obj));
     };
-
-    function sentText() {
-        conn.send(document.getElementById("Txt").value);
-    }
 
     function ready() {
       window.setInterval(() => {
@@ -73,7 +70,7 @@
         console.log('sendMessage');
         count++;
         let position = { position: {latitude: -43.4 - count/1000, longitude: lo + count/50000}, name: 'Joe car33'}
-        let obj = { command: 'MESSAGE', send_to: '', device_type: 'MOBILE_GPS', device_code: '100006', random_link_code: randomLinkUcode, message: position };
+        let obj = { command: 'MESSAGE', send_to: '', device_type: 'MOBILE_GPS', device_code: document.getElementById("Txt").value, random_link_code: randomLinkUcode, message: position };
 
         conn.send(JSON.stringify(obj));
     }
@@ -108,7 +105,7 @@
 <div>
   <form action="">
     <label for="fname"> </label>
-    <input type="text" id="fname" id="Txt" name="Device Code" placeholder="Your code..">
+    <input type="text" id="Txt" name="Device Code" placeholder="Your code..">
     <input type="button" value="Submit" onclick="sendAuth()">
   </form>
 </div>

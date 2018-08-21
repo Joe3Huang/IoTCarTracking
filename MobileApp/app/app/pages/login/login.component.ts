@@ -1,46 +1,49 @@
 import { Component } from "@angular/core";
 // import {Page} from "ui/page";
-// import { User } from "../../shared/user/user";
-// import { UserService } from "../../shared/user/user.service";
-import { WebsocketService } from "../../shared/websocket/websocket.service";
-import { Store } from "@ngrx/store";
-import { Observable } from "rxjs/Observable";
-import { INCREMENT, DECREMENT, RESET } from "./../../store/counter.reducer";
-import { AppState } from "./../../store/store.interface";
-
+import { User } from "../../shared/user/user";
+import { UserService } from "../../shared/user/user.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector: "login",
    //  moduleId: module.id,
-    providers: [WebsocketService],
+    providers: [UserService],
     templateUrl: "./pages/login/login.html",
     styleUrls: ["pages/login/login-common.css"]
 })
 
 export class LoginComponent {
     // Your TypeScript logic goes here
-    deviceCode = '';
-    webSocket;
-    counter$: Observable<number>;
-    constructor(private store: Store<AppState>) {
+    user: User;
+    isLoggingIn = true;
+    constructor(private router: Router, private userService: UserService) {
         // page.actionBarHidden = true;
-        this.webSocket = WebsocketService.Instance(this.store);
-        this.counter$ = store.select(s => s.counter);
+        this.user = new User();
+        console.dir(this.user);
     }
 
     submit() {
-        console.log(this.deviceCode);
+        if (this.isLoggingIn) {
+            this.login();
+          } else {
+            this.signUp();
+          }
     }
 
-    public increment() {
-        this.store.dispatch({ type: INCREMENT });
+    login() {
+        console.log('log in emthod');
+        this.userService.login(this.user).subscribe(res => { 
+            this.router.navigate(["/main"])   
+        },
+        (error) => alert("Unfortunately we could not find your account.")
+    );
     }
 
-    public decrement() {
-        this.store.dispatch({ type: DECREMENT });
+    signUp() {
+        this.userService.register(this.user);
     }
 
-    public reset() {
-        this.store.dispatch({ type: RESET });
+    toggleDisplay() {
+        this.isLoggingIn = !this.isLoggingIn;
     }
 }

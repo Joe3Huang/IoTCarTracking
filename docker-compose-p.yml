@@ -1,0 +1,27 @@
+version: '3'
+services:
+  restapi-app-d:
+    build:
+      context: ./
+      dockerfile: Dockerfile_P
+    image: restapi/php-nginx-p
+    # environment:
+    #   XDEBUG_HOST : ${XDEBUG_HOST}
+    env_file: '.p.env'
+    ports:
+      - "${APP_PORT}:80"
+    networks:
+      - restapi_docker
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 500000
+        hard: 500000
+    sysctls:
+      - net.core.somaxconn=1048576
+networks:
+  restapi_docker:
+    driver: "bridge"
+volumes:
+  rapimsqldata:
+    driver: "local"

@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -39,11 +39,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'isActive'
     ];
 
-    protected $primarykey = 'uid';
+   // protected $primarykey = 'uid';
 
-    public $incrementing = false;
-
-    /**
+    // public $incrementing = false;
+    /*
      * The attributes excluded from the model's JSON form.
      *
      * @var array
@@ -51,6 +50,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
     /**
      * @return bool
      */
@@ -59,5 +59,23 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return (isset($this->role) ? $this->role : self::BASIC_ROLE) == self::ADMIN_ROLE;
     }
 
-    
+    // public function getIdAttribute()
+    // {
+    //     return $this->uid();
+    // }
+
+    // public function findForPassport($username) {
+    //     return $this->where('uid', $username)->first();
+    // }
+    // public function findForPassport($username) {
+    //     return $this->where('id', $username)->first();
+    // }
+    // public function find($id)
+    // {
+    //         // if (!Passport::$useClientUUIDs) {
+    //         //     return Client::find($id);
+    //         // } else {
+    //              return Client::where('uid', $id)->firstOrFail();
+    //         //}
+    // }
 }

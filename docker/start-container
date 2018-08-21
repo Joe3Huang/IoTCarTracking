@@ -4,4 +4,20 @@ sed -i "s/xdebug\.remote_host\=.*/xdebug\.remote_host\=$XDEBUG_HOST/g" /etc/php/
 
 /usr/bin/supervisord
 
+RUN chown -R www-data:www-data \
+        /var/www/html/RestApi/storage \
+        /var/www/html/RestApi/bootstrap/cache
+
+# RUN chmod -R 777 /var/www/html/RestApi/storage \
+#         /var/www/html/RestApi/bootstrap/cache
+
+RUN /var/www/html/RestApi/ php artisan optimize
+
+# ENTRYPOINT ["/bin/bash" , "-c", "source env_d.sh"]
+#RUN /env_d.sh
+#RUN php artisan optimize
+
+#RUN php artisan key:generate
+#CMD ["php", "artisan", "queue:listen"]
+#cd /var/www/html/RestApi && php artisan optimize && php artisan key:generate
 # php -S 0.0.0.0:80 -t /var/www/html

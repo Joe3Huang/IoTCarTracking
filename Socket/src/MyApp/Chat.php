@@ -32,16 +32,19 @@ class Chat implements MessageComponentInterface {
         if (!is_object($data) || !property_exists($data, 'device_code')) {
             return false;
         }
-        $device = Methods::curlGet('localhost/RestApi/device/getDeviceByCode/' . $data->device_code);
-        if ($device == "FAIL") {
-            $from->send(json_encode(['command' => 'AUTH', 'message'=> 'FAIL']));
-            return '';
-        }
-        $device = $device[0];
         $theClient = $this->getTheUserConn($from, $this->clients);
-        $theClient->userData['deviceId'] = $device->uid;
-        $theClient->userData['deviceOwnerId'] = $device->owner_uid;
-        $theClient->userData['deviceCode'] = $device->device_code;
+        if (!$theClient->userData['bIsAuthorized']) {
+            echo "connect first time", PHP_EOL;
+            $device = Methods::curlGet('localhost/RestApi/device/getDeviceByCode/' . $data->device_code);
+            if ($device == "FAIL") {
+                $from->send(json_encode(['command' => 'AUTH', 'message'=> 'FAIL']));
+                return '';
+            }
+            $device = $device[0];
+            $theClient->userData['deviceId'] = $device->uid;
+            $theClient->userData['deviceOwnerId'] = $device->owner_uid;
+            $theClient->userData['deviceCode'] = $device->device_code;
+        }
         switch ($data->command) {
             case 'AUTH':
                 $this->authorization($theClient, $device, $data);
@@ -49,7 +52,7 @@ class Chat implements MessageComponentInterface {
             case 'MESSAGE':
                 if($theClient->userData['bIsAuthorized']) {
                     if ($data->device_type == 'MOBILE_GPS') {
-                        $this->groupMessage($msg, [$device->owner_uid]);
+                        $this->groupMessage($msg, [ $theClient->userData['deviceOwnerId']]);
                     }                    
                 }
                 break;
@@ -127,6 +130,7 @@ class Chat implements MessageComponentInterface {
             try{
                 if (!$device->random_link_ucode) {
                     $device->random_link_ucode = Methods::uuid();
+                    $device->status = 'CONNECTED';
                     $resp = Methods::curlPost('localhost/RestApi/device/updateDeviceDetails/', $device);
                     if ( $resp == 'OK') {
                         $updatedDate = json_encode(['command' => 'AUTH', 'message'=> 'DEVICE-OK', 'data'=>$device]);

@@ -1,4 +1,4 @@
 {
-    "restApiUrl": "192.168.99.100:8080/RestApi",
-    "websocketUrl": "192.168.99.100:8080/Socket"  
+    "restApiUrl": "http://192.168.99.100:8080/RestApi",
+    "websocketUrl": "192.168.99.100:8080/Socket"
 }

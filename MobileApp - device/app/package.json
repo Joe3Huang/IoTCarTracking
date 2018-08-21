@@ -1,0 +1,57 @@
+{
+  "description": "NativeScript Application",
+  "license": "SEE LICENSE IN <your-license-filename>",
+  "readme": "NativeScript Application",
+  "repository": "<fill-your-repository-here>",
+  "nativescript": {
+    "id": "org.nativescript.app",
+    "tns-android": {
+      "version": "3.4.3"
+    }
+  },
+  "dependencies": {
+    "@angular/animations": "~5.2.0",
+    "@angular/common": "~5.2.0",
+    "@angular/compiler": "~5.2.0",
+    "@angular/core": "~5.2.0",
+    "@angular/forms": "~5.2.0",
+    "@angular/http": "~5.2.0",
+    "@angular/platform-browser": "~5.2.0",
+    "@angular/platform-browser-dynamic": "~5.2.0",
+    "@angular/router": "~5.2.0",
+    "@ngrx/store": "^5.2.0",
+    "@ngrx/store-devtools": "^5.2.0",
+    "nativescript-angular": "~5.2.0",
+    "nativescript-geolocation": "^4.2.6",
+    "nativescript-localstorage": "^1.1.5",
+    "nativescript-sqlite": "^2.0.1",
+    "nativescript-theme-core": "~1.0.4",
+    "nativescript-websockets": "^1.4.0",
+    "reflect-metadata": "~0.1.8",
+    "rxjs": "~5.5.2",
+    "tns-core-modules": "^4.1.0",
+    "zone.js": "~0.8.18"
+  },
+  "devDependencies": {
+    "@angular/compiler-cli": "~5.2.0",
+    "@ngtools/webpack": "~1.9.4",
+    "babel-traverse": "6.4.5",
+    "babel-types": "6.4.5",
+    "babylon": "6.4.5",
+    "clean-webpack-plugin": "~0.1.19",
+    "copy-webpack-plugin": "~4.3.0",
+    "css-loader": "~0.28.7",
+    "extract-text-webpack-plugin": "~3.0.2",
+    "lazy": "1.0.11",
+    "nativescript-dev-typescript": "~0.6.0",
+    "nativescript-dev-webpack": "^0.10.1",
+    "nativescript-worker-loader": "~0.8.1",
+    "raw-loader": "~0.5.1",
+    "resolve-url-loader": "~2.2.1",
+    "typescript": "~2.6.2",
+    "uglifyjs-webpack-plugin": "~1.1.6",
+    "webpack": "~3.10.0",
+    "webpack-bundle-analyzer": "^2.9.1",
+    "webpack-sources": "~1.1.0"
+  }
+}

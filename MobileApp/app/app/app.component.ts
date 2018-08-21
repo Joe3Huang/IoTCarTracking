@@ -6,7 +6,9 @@ import { WebsocketService } from "./shared/websocket/websocket.service";
 import { Store } from "@ngrx/store";
 import { AppState } from "./store/store.interface";
 // import { Observable } from "rxjs/Observable";
-// import { SETDEVICECODE, SETRUCODE  } from "./reducers/socket.reducer";
+import { SETTOKEN } from "./store/user.reducer";
+import { Router } from "@angular/router";
+import { BottomNavigation, BottomNavigationTab, OnTabSelectedEventData } from 'nativescript-bottom-navigation';
 
 require( "nativescript-localstorage" );
 //localStorage.clear();
@@ -23,18 +25,65 @@ if (!localStorage.getItem('random_link_ucode')) {
     localStorage.setItem('random_link_ucode', 'NONE');
 }
 
+if (!localStorage.getItem('token')) {
+    console.log('token doesnt exist');
+    localStorage.setItem('token', 'NONE');
+}
+// <BottomNavigation activeColor="red"
+// inactiveColor="yellow"
+// backgroundColor="black"
+// keyLineColor="black"
+// (tabSelected)="onBottomNavigationTabSelected($event)"
+// row="1">
+//     <BottomNavigationTab title="First" icon="ic_home"></BottomNavigationTab>
+//     <BottomNavigationTab title="Second" icon="ic_view_list"></BottomNavigationTab>
+//     <BottomNavigationTab title="Third" icon="ic_menu"></BottomNavigationTab>
+// </BottomNavigation>
 @Component({
     selector: "main",
-    template: "<page-router-outlet></page-router-outlet>",
+    template: `
+    <page-router-outlet></page-router-outlet>
+    `,
     providers: [WebsocketService],
 })
 export class AppComponent {
-    // Your TypeScript logic goes here
     user: User;
     isLoggingIn = true;
     private webSocket;
-    constructor(page: Page, private store: Store<AppState>) {
+    protected router: Router;
+    // public tabs: BottomNavigationTab[] = [
+    //     new BottomNavigationTab('First', 'ic_home'),
+    //     new BottomNavigationTab('Second', 'ic_view_list'),
+    //     new BottomNavigationTab('Third', 'ic_menu')
+    // ];
+     
+    constructor(page: Page, private store: Store<AppState>, private r: Router) {
+        this.router = r;
         page.actionBarHidden = true;
         this.webSocket = WebsocketService.Instance(this.store);
+        this.init();
+    }
+
+    init() {
+        // read token from localstorage and jump to the page
+        let token = localStorage.getItem('token');
+        let self = this;
+        this.store.select('user').subscribe(function (res) { 
+            if (res.token == 'NONE') {
+                self.router.navigate(["/login"]); 
+            }
+        });        
+        this.store.dispatch({ type: SETTOKEN, payload: token});
+        if(token != 'NONE') {
+            this.router.navigate(["/main"]); 
+        }
+    }
+
+    ngOnDestroy() {
+        console.log('destory');
+    }
+
+    onBottomNavigationTabSelected(args: OnTabSelectedEventData): void {
+        console.log(`Tab selected:  ${args.oldIndex}`);
     }
 }

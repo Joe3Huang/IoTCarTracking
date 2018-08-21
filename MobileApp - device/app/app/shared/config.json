@@ -1,0 +1,6 @@
+
+{
+    "restApiUrl": "http://35.197.110.192/RestApi",
+    "websocketUrl": "35.197.110.192/Socket"  
+}
+

@@ -1,0 +1,30 @@
+<StackLayout>
+    <!-- <Image src="~/images/apple.jpg" stretch="none" horizontalAlignment="center"></Image> -->
+    <TextField hint="Device Code" [(ngModel)]="this.deviceCode"
+        autocorrect="false" autocapitalizationType="none"></TextField>
+    <Button text="Connect" class="submit-button" (tap)="submit()"></Button>
+    <GridLayout rows="auto, auto, *" columns="* auto *">
+        <Button text="-" (tap)="decrement()" class="counter-btn" col="0"></Button>
+        <Label [text]="counter$ | async" class="counter" col="1"></Label>
+        <Button text="+" (tap)="increment()" class="counter-btn" col="2"></Button>
+        <Button row="1" colSpan="3" text="reset" (tap)="reset()" class="counter-btn"></Button>
+        <ns-dock-monitor screenCover="0.5"></ns-dock-monitor>
+    </GridLayout>
+</StackLayout>
+
+<Page loaded="pageLoaded">
+    <TabView id="tabView1">
+      <TabView.items>
+        <TabViewItem title="Tab 1">
+          <TabViewItem.view>
+            <Label text="This is Label in Tab 1" />
+          </TabViewItem.view>
+        </TabViewItem>
+        <TabViewItem title="Tab 2">
+          <TabViewItem.view>
+            <Label text="This is Label in Tab 2" />
+          </TabViewItem.view>
+        </TabViewItem>
+      </TabView.items>
+    </TabView>
+  </Page>

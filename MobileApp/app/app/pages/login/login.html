@@ -1,13 +1,10 @@
 <StackLayout>
     <!-- <Image src="~/images/apple.jpg" stretch="none" horizontalAlignment="center"></Image> -->
-    <TextField hint="Device Code" [(ngModel)]="this.deviceCode"
+    <Label text="" left="10" top="10" width="100" height="100" backgroundColor=""></Label>
+    <TextField hint="Email Address" keyboardType="email" [(ngModel)]="this.user.email"
         autocorrect="false" autocapitalizationType="none"></TextField>
-    <Button text="Connect" class="submit-button" (tap)="submit()"></Button>
-    <GridLayout rows="auto, auto, *" columns="* auto *">
-        <Button text="-" (tap)="decrement()" class="counter-btn" col="0"></Button>
-        <Label [text]="counter$ | async" class="counter" col="1"></Label>
-        <Button text="+" (tap)="increment()" class="counter-btn" col="2"></Button>
-        <Button row="1" colSpan="3" text="reset" (tap)="reset()" class="counter-btn"></Button>
-        <ns-dock-monitor screenCover="0.5"></ns-dock-monitor>
-    </GridLayout>
+    <TextField hint="Password" secure="true" [(ngModel)]="user.password"></TextField>
+
+    <Button [text]="isLoggingIn ? 'Sign in' : 'Sign up'" class="submit-button" (tap)="submit()"></Button>
+    <Button [text]="isLoggingIn ? 'Sign up' : 'Back to login'" (tap)="toggleDisplay()"></Button>
 </StackLayout>

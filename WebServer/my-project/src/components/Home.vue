@@ -1,31 +1,57 @@
 <template>
   <div class="home header">
-    <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center  container-fluid">
+    <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center container-fluid">
         <a href="/" class="brand-title navbar-brand d-flex w-50 mr-auto">IoT-CarTracking</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar3">
+        <!-- <button v-b-toggle.collapsingNavbar3 class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar3">
             <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse w-200" id="collapsingNavbar3">
-            <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
-                <li class="nav-item">
+        </button> -->
+        <b-btn v-b-toggle.collapse1 class="navbar-toggler" type="button" data-toggle="collapse">
+            <span class="navbar-toggler-icon"></span>
+        </b-btn>
+        <b-collapse id="collapse1" class="navbar-collapse collapse" style="width: 1000px;">
+          <b-card style="border:0px; margin:0px; padding:0px;">
+            <ul class="nav navbar-nav pull-right">
+                <li class="nav-item" v-if="this.$store.getters['user/isLoggedin']">
                     <a class="nav-link" href="#" v-on:click="bShowDevices = !bShowDevices">Devices</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" v-if="this.$store.getters['user/isLoggedin']">
                     <a class="nav-link" href="#" v-on:click="test()">Logout</a>
                 </li>
                 <li class="nav-item" v-if="!this.$store.getters['user/isLoggedin']">
                     <login></login>
+                    <div class="d-flex justify-content-end">
+                      <router-link class="nav-link" style="font-size: 50%; padding: 0px; margin: 2px 0 0 0;" to="/register">Register -</router-link>
+                      <router-link class="nav-link" style="font-size: 50%; padding: 0px; margin: 2px 0 0 0;" to="/resetPassword">- Forgot Password</router-link>
+                    </div>
                 </li>
-                <!-- <li class="nav-item" >
-                    <button v-on:click="test()">Clean Cache data</button>
-                </li> -->
             </ul>
-        </div>
+          </b-card>
+        </b-collapse>
+        <!-- <div class="navbar-collapse collapse" id="collapsingNavbar3" style="width: 1000px;">
+            <ul class="nav navbar-nav pull-right">
+                <li class="nav-item" v-if="this.$store.getters['user/isLoggedin']">
+                    <a class="nav-link" href="#" v-on:click="bShowDevices = !bShowDevices">Devices</a>
+                </li>
+                <li class="nav-item" v-if="this.$store.getters['user/isLoggedin']">
+                    <a class="nav-link" href="#" v-on:click="test()">Logout</a>
+                </li>
+                <li class="nav-item" v-if="!this.$store.getters['user/isLoggedin']">
+                    <login></login>
+                    <div class="d-flex justify-content-end">
+                      <router-link class="nav-link" style="font-size: 50%; padding: 0px; margin: 2px 0 0 0;" to="/register">Register -</router-link>
+                      <router-link class="nav-link" style="font-size: 50%; padding: 0px; margin: 2px 0 0 0;" to="/resetPassword">- Forgot Password</router-link>
+                    </div>
+                </li>
+            </ul>
+        </div> -->
     </nav>
     <device v-if="this.bShowDevices"></device>
     <div class="map">
         <google-map name="example" ref="googleMap"> </google-map>
     </div>
+    <div>isLoggedin: {{ this.$store.getters['user/isLoggedin'] }}</div>
+    <div>isConnected - socket: {{ this.$store.getters['socket/isConnected'] }}</div>
+    <div>Authentication - socket: {{ this.$store.getters['socket/isAuthenticated'] }}</div>
   </div>
 </template>
 
@@ -139,4 +165,7 @@ a {
     margin: 0 auto;
 }
 
+.card-body {
+    padding: 0px;
+}
 </style>

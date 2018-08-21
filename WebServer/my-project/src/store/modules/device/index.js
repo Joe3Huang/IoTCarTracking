@@ -54,6 +54,7 @@ const actions = {
     })
       .then(function (response) {
         console.log(response.data)
+        context.commit('SET_DEVICE_DATA', response.data)
       })
       .catch(function (error) {
         console.log('disconnectTheDevice')

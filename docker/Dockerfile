@@ -5,10 +5,13 @@ LABEL maintainer=""
 RUN apt-get update \
     && apt-get install -y locales \
     && locale-gen en_US.UTF-8
+# RUN apt-get install -y locales \
+#     && locale-gen en_US.UTF-8
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
-ENV LC_ALL en_US.UTF-8
+ENV LC_ALL en_US.UTF-8 
+COPY . /var/www/html
 
 WORKDIR /var/www/html
 
@@ -39,5 +42,11 @@ RUN chmod +x /usr/local/bin/start-container
 EXPOSE 80
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# ADD env_d.sh /var/www/html/env_d.sh
+
+# RUN chmod +x /var/www/html/env_d.sh
+
+# ENTRYPOINT ["/bin/bash" , "-c", "source /var/www/html/env_d.sh"]
 
 CMD ["start-container"]

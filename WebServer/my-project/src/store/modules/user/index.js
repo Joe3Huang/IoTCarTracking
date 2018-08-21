@@ -5,7 +5,8 @@ const defaultState = {
   userName: '',
   loggedInStatus: false,
   authToken: '',
-  uid: ''
+  uid: '',
+  message: ''
 }
 
 const getters = {
@@ -14,6 +15,9 @@ const getters = {
   },
   isLoggedin: (state) => {
     return state.loggedInStatus
+  },
+  getMessage: (state) => {
+    return state.message
   }
 }
 
@@ -33,9 +37,13 @@ const mutations = {
     state.loggedInStatus = false
     state.authToken = ''
     state.uid = ''
+    state.message = ''
   },
   addUid: function (state, uid) {
     state.uid = uid
+  },
+  SET_MESSAGE: function (state, message) {
+    state.message = message
   }
 }
 
@@ -43,8 +51,8 @@ const actions = {
   login: function (context, userInput) {
     axios.post('/accessToken', {
       grant_type: 'password',
-      client_id: '6',
-      client_secret: '3FGAU0peIBuIjdrazcaKpb2LzypqIRwuJfjiPENN',
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
       scope: '*',
       username: userInput.email,
       password: userInput.password
@@ -52,9 +60,13 @@ const actions = {
       .then(function (response) {
         context.commit('addWebToken', response.data.access_token) // pass the webtoken as payload to the mutation
         Cookies.set('access_token', response.data.access_token, { expires: 7 })
+        context.commit('SET_MESSAGE', '')
       })
       .catch(function (error) {
         console.log(error.response)
+        if (error.response) {
+          context.commit('SET_MESSAGE', error.response.data.error)
+        }
       })
   },
   logout: function (context) {

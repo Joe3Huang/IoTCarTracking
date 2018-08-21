@@ -17,6 +17,7 @@ class UpdateTableUser extends Migration
             $table->string('uid', 36)->unique();
             $table->string('first_name', '100')->nullable()->change();
             $table->string('last_name', '100')->nullable()->change();
+            $table->string('city', '100')->nullable()->change();;
             $table->string('username', '50')->nullable();
             $table->enum('role', array('BASIC_USER', 'ADMIN_USER'))->default('BASIC_USER');
             $table->tinyInteger('isActive');

@@ -18,6 +18,13 @@ export default {
       bounds: null,
       markers: [],
       devicesTemp: []
+      // markerShape: { type: 'rectangle' },
+      // icon: {
+      //   url: '@~assets/logo.png',
+      //   origin: new google.maps.Point(0, 0),
+      //   anchor: new google.maps.Point(0, 0),
+      //   scaledSize: new google.maps.Size(50, 50)
+      // }
     }
   },
   mounted: function () {
@@ -47,10 +54,21 @@ export default {
               this.devicesTemp.push(newValue)
               this.setNewCoordinate(newValue)
             }
-          } else if (newValue.command == 'CLOSE') {
-            this.$store.commit('socket/SET_DEVICE_DATA', {})
-            this.deleteMarker(newValue.device_code)
           }
+          if (newValue.command == 'CLOSE') {
+            this.$store.commit('socket/SET_DEVICE_DATA', {})
+            this.deleteMarker(newValue)
+          }
+        }
+      })
+    this.$store.watch(
+      (state) => {
+        return this.$store.getters['socket/isAuthenticated'] // could also put a Getter here
+      },
+      (newValue, oldValue) => {
+        if (!newValue) {
+          this.deleteAllMarker()
+          this.devicesTemp = []
         }
       })
   },
@@ -71,7 +89,7 @@ export default {
     },
     updateMap: function (coord) {
       const position = new google.maps.LatLng(coord.latitude, coord.longitude)
-      const marker = new google.maps.Marker({position, map: this.map, title: coord.name, device_code: coord.device_code})
+      const marker = new google.maps.Marker({ position, map: this.map, label: coord.name, device_code: coord.device_code })
       this.markers.push(marker)
       console.log('updateMarkers', this.markers)
       this.map.fitBounds(this.bounds.extend(position))
@@ -86,25 +104,46 @@ export default {
       }
     },
     deleteMarker: function (input) {
-      let element = this.markerCoordinates.find(function (maker) { return maker.device_code != input.device_code })
-      let index = this.markerCoordinates.indexOf(element)
-      if (index !== -1) {
-        this.markerCoordinates.splice(index, 1)
+      let element = this.markerCoordinates.find(function (markerCoord) { return markerCoord.device_code == input.device_code })
+      let index
+      if (element) {
+        index = this.markerCoordinates.indexOf(element)
+        if (index !== -1) {
+          this.markerCoordinates.splice(index, 1)
+        }
       }
-      // this.markerCoordinates = this.markerCoordinates.filter(function (maker) { return maker.device_code != input.device_code })
-      // console.log('-------deleteMarker------', this.markerCoordinates)
-      element = this.markers.find(function (maker) { return maker.device_code != input.device_code })
-      this.clearMarker(element)
-      index = this.markers.indexOf(element)
-      if (index !== -1) {
-        this.markers.splice(index, 1)
+      console.log('-------deleteMarker------11111', this.markerCoordinates)
+      element = this.markers.find(function (maker) { return maker.device_code == input.device_code })
+      if (element) {
+        this.clearMarker(element)
+        index = this.markers.indexOf(element)
+        if (index !== -1) {
+          this.markers.splice(index, 1)
+        }
       }
       console.log('-------deleteMarker------2222', this.markers)
-      this.updateMap()
+      // re-render
+      for (var coord of this.markerCoordinates) {
+        this.updateMarkerPosition(coord)
+      }
+      // clean temp data
+      element = this.devicesTemp.find(function (maker) { return maker.device_code == input.device_code })
+      index = this.devicesTemp.indexOf(element)
+      if (index !== -1) {
+        this.devicesTemp.splice(index, 1)
+      }
     },
     // Removes the markers from the map, but keeps them in the array.
     clearMarker: function (theMarker) {
+      console.log('------------clearMarker--------------', theMarker)
+      theMarker.label = null
       theMarker.setMap(null)
+    },
+    deleteAllMarker: function () {
+      for (var i = 0; i < this.markers.length; i++) {
+        this.markers[i].setMap(null)
+      }
+      this.markers = []
     }
   }
 }
@@ -120,5 +159,12 @@ export default {
   width: 100%;
   height: 100%;
   background: gray;
+}
+
+.mapIconLabel {
+    font-size: 15px;
+    font-weight: bold;
+    color: #FFFFFF;
+    font-family: 'DINNextRoundedLTProMediumRegular';
 }
 </style>

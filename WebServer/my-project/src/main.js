@@ -13,7 +13,7 @@ import VueNativeSock from 'vue-native-websocket'
 Vue.config.productionTip = false
 Vue.config.devtools = true
 
-Vue.use(VueNativeSock, 'ws://192.168.99.100:8080/Socket', {
+Vue.use(VueNativeSock, process.env.SOCKET_URL, {
   // store: store.socket,
   format: 'json',
   reconnection: true, // (Boolean) whether to reconnect automatically (false)

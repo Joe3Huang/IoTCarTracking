@@ -64,7 +64,7 @@ const mutations = {
     state.browserUserData = input
   },
   RESET (state) {
-    state.isConnected = false
+    // state.isConnected = false
     state.isAuthenticated = false
     state.message = ''
     state.reconnectError = false

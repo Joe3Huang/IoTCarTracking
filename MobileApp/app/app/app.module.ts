@@ -4,30 +4,28 @@ import { NativeScriptFormsModule } from "nativescript-angular/forms";
 import { NativeScriptRouterModule } from "nativescript-angular/router";
 import { NativeScriptHttpModule } from "nativescript-angular/http";
 
-// import { NativeScriptDevToolsMonitors } from "ngrx-devtools-nativescript";
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { StoreModule, ActionReducer, ActionReducerMap, combineReducers } from '@ngrx/store';
 import { counterReducer } from "./store/counter.reducer";
 import { socketReducer } from "./store/socket.reducer";
-
+import { userReducer } from "./store/user.reducer";
 import { routes, navigatableComponents } from "./app.routing";
 import { AppComponent } from "./app.component";
 import { AppState } from "./store/store.interface";
-// const reducers = {
-//   counter: counterReducer,
-//   socket: socketReducer
-// };
+import { NativescriptBottomNavigationModule} from "nativescript-bottom-navigation/angular";
+ 
 const reducers = {
   counter: counterReducer,
-  socket: socketReducer
+  socket: socketReducer,
+  user: userReducer
 };
-// const reducer: ActionReducer<UserState> = combineReducers(reducers);
 
 @NgModule({
   imports: [
     NativeScriptModule,
     // NativeScriptDevToolsMonitors,
+    NativescriptBottomNavigationModule,
     StoreModule.forRoot(reducers),
     StoreDevtoolsModule.instrument(),
     NativeScriptFormsModule,

@@ -5,8 +5,6 @@ import { Observable } from "rxjs/observable"
 import { Store } from "@ngrx/store";
 import { SETDEVICECODE, SETRUCODE  } from "./../../store/socket.reducer";
 import { AppState  } from "./../../store/store.interface";
-
-Store
 let config: Config = require('./../config.json');
 // require("nativescript-websockets");
 require( "nativescript-localstorage" );
@@ -29,15 +27,7 @@ export class WebsocketService {
         this.store.dispatch({ type: SETDEVICECODE, payload: localStorage.getItem('device_code')});
         this.store.dispatch({ type: SETRUCODE, payload: localStorage.getItem('random_link_ucode')});
         console.log("payload----");
-        this.store.select(function (s) { return s; }).subscribe(function (res) { return console.dir(res); });
-        console.dir({wqe:{qqq:234}});
-        // this.store.select(s => s.socket).subscribe(
-        //     (data)=>{ 
-        //         console.log('do my thing', data); // Got the thing
-        //         // self.deviceCode = data.deviceCode;
-        //         console.dir(data);
-        //      }
-        // );
+       //  this.store.select(function (s) { return s; }).subscribe(function (res) { return console.dir(res); });
         console.log('--------this.deviceCode------', this.deviceCode);
         console.log('--------this.deviceCode???------', this.deviceCode);
         this.connect();
@@ -58,7 +48,6 @@ export class WebsocketService {
             console.log("Socket was closed because: ", reason, " code: ", code); 
             console.log("close----------------------"); 
             self.reconnect();    
-            console.log(self.reconnectCount);
         });
  
         this.socket.on('error', function(socket, error) { 
@@ -68,22 +57,12 @@ export class WebsocketService {
     }
 
     private reconnect() { 
-        console.log(this.reconnectCount); 
+        console.log('reconnectCount', this.reconnectCount); 
         console.log("reconnect----------------------"); 
-        var self=this;
-        if (!this.reconnectCount) {
-            this.reconnectTimer = setInterval(function(){ 
-                if (self.reconnectCount < 3) {
-                    self.reconnectCount ++;
-                    self.socket.open();
-                }
-                if (self.reconnectCount >= 3) {
-                    clearInterval(self.reconnectTimer);
-                }            
-            }, 3000);
+        if (this.reconnectCount < 3) {
+            this.socket.open();
+            this.reconnectCount += 1; 
         }
-
-         
     }
 
     public isSocketConnected() {

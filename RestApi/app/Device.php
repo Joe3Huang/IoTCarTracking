@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Device extends Model
 {
 
-    const MOBILE_GPS = 'MOBLIE_GPS';
+    const MOBILE_GPS = 'MOBILE_GPS';
     const BROWSER_ADMIN = 'BROWSER_ADMIN';
+    const CONNECTED = 'CONNECTED';
+    const UNCONNECTED = 'UNCONNECTED';
     /**
      * The attributes that are mass assignable.
      *

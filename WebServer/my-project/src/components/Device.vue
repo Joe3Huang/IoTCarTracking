@@ -25,7 +25,8 @@ export default {
     }
   },
   created () {
-    this.devices = this.$store.getters['device/getUserDevices']
+    let allDevices = this.$store.getters['device/getUserDevices']
+    this.devices = allDevices.filter((d) => { return d.device_type != 'BROWSER_ADMIN' })
     console.log(this.devices)
   },
   methods: {

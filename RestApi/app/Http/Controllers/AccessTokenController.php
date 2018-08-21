@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Repository\UserRepository;
-use Log;
+
+use GuzzleHttp\Exception\ClientException;
+
+use League\OAuth2\Server\Exception\OAuthServerException;
+
+use Route;
 
 class AccessTokenController extends Controller
 {
@@ -40,13 +45,19 @@ class AccessTokenController extends Controller
     {
         $inputs = $request->all();
         //Set default scope with full access
-        if (!isset($inputs['scope']) || empty($inputs['scope'])) {
-            $inputs['scope'] = "*";
+        try {
+            if (!isset($inputs['scope']) || empty($inputs['scope'])) {
+                $inputs['scope'] = "*";
+            }
+    
+            $tokenRequest = $request->create('/oauth/token', 'post', $inputs);
+    
+            // forward the request to the oauth token request endpoint
+            return \Route::dispatch($tokenRequest);
+        } catch (Exception $e) {
+            return $e;
         }
 
-        $tokenRequest = $request->create('/oauth/token', 'post', $inputs);
-
-        // forward the request to the oauth token request endpoint
-        return app()->dispatch($tokenRequest);
+        
     }
 }

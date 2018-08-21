@@ -14,6 +14,7 @@ class UuidServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // $this->app->bind('App\Library\Services\UuidInterface','App\Library\Services\UuidService');
         $this->app->bind('App\Library\Services\UuidInterface', function ($app) {
             return new UuidService();
           });

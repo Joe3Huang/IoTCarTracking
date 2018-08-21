@@ -7,12 +7,13 @@ services:
       context: ./docker
       dockerfile: Dockerfile
     image: restapi/php-nginx
-    environment:
-      XDEBUG_HOST : ${XDEBUG_HOST}
+    # environment:
+    #   XDEBUG_HOST : ${XDEBUG_HOST}
     ports:
       - "${APP_PORT}:80"
     volumes:
       - .:/var/www/html
+    env_file: '.env'
     networks:
       - restapi_docker
     ulimits:
@@ -36,7 +37,7 @@ services:
     environment:
         - PMA_ARBITRARY=1
         - PMA_HOST=${MYSQL_HOST}
-    restart: always
+    restart: "no"
     depends_on:
         - restapi-mysql
   restapi-mysql:
@@ -45,7 +46,7 @@ services:
       - "${DB_PORT}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: lumenapidb
+      MYSQL_DATABASE: homestead
       MYSQL_USER: homestead
       MYSQL_PASSWORD: secret
     volumes:

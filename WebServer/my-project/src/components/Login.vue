@@ -1,11 +1,12 @@
 <template>
-  <div class="login">
-      <form id="signin" class="navbar-form navbar-right form-inline" role="form" @submit.prevent="login">
-        <div class="input-group">
+  <div class="login w-100">
+      <form id="signin" class="form-inline justify-content-end" role="form" @submit.prevent="login" style="flex-flow: row;">
+        <div class="input-group">{{msg}}</div>
+        <div class="input-group mr-1">
             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
             <input id="email" v-model="email" type="email" class="form-control" name="email" value="" placeholder="Email Address">
         </div>
-        <div class="input-group">
+        <div class="input-group mr-1">
             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
             <input id="password" v-model="password"  type="password" class="form-control" name="password" value="" placeholder="Password">
         </div>
@@ -15,16 +16,27 @@
 </template>
 
 <script>
-
-// console.info('I' + icons.heart + ' Glyphicons!')
 export default {
   name: 'Login',
   data () {
     return {
-      msg: 'This is Login page',
+      msg: '',
       email: '',
       password: ''
     }
+  },
+  created () {
+    this.$store.watch(
+      (state) => {
+        return {data: this.$store.getters['user/getMessage']}// could also put a Getter here
+      },
+      (newValue, oldValue) => {
+        if (newValue) {
+          console.log(newValue)
+          this.msg = newValue.data
+        }
+      }
+    )
   },
   methods: {
     login () {

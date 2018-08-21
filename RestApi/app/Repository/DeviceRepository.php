@@ -7,10 +7,11 @@ use App\Models\UserDeviceLink;
 use Illuminate\Support\Facafes\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Library\Services\UuidInterface;
-
+use Carbon\Carbon;
 class DeviceRepository{
 
     protected $uuidService;
+
 
     public function __construct(UuidInterface $uuidService){
         $this->uuidService = $uuidService;
@@ -104,18 +105,32 @@ class DeviceRepository{
 		}
 	}
 
-	// public function insertUser($input){
-	// 	$user = new User();
-	// 	$user->first_name = $input['first_name'];
-	// 	$user->last_name = $input['last_name'];
-	// 	$user->email=$input['email'];
-	// 	$user->password = Hash::make($input['password']);
-	// 	$user->city = $input['city'];
-	// 	$user->status = $input['status'];
-	// 	$user->save();
-	// }
+	public function insertAdminDevice($input){
+		$device = new Device();
+		$device->uid = $input['uid'];
+		$device->device_type = $device::BROWSER_ADMIN;
+		$device->name='BROWSER_ADMIN';
+		$device->owner_uid = $input['uid'];
+		$device->expires_date = Carbon::createFromDate(2050, 1, 1, 'GMT');
+		$device->random_link_ucode = $this->uuidService->getUuid();
+		$device->status = $device::UNCONNECTED;
+		$device->save();
+		return $device;
+	}
 
-
+	public function insertDevice($input){
+		$device = new Device();
+		$device->uid = $input['uid'];
+		$device->device_type = $input['device_type'];
+		$device->name='device';
+		$device->owner_uid = $input['owner_uid'];
+		$device->expires_date = Carbon::createFromDate(2050, 1, 1, 'GMT');
+		$device->isExpired = 0; 
+		$device->random_link_ucode = '';//$this->uuidService->getUuid();
+		$device->status = $device::UNCONNECTED;
+		$device->save();
+		return $device;
+	}
 	// public function deleteUser($id){
 	// 	$user = User::find($id);
 	// 	$user->delete();	

@@ -1,0 +1,19 @@
+<StackLayout>
+    <!-- <Image src="~/images/apple.jpg" stretch="none" horizontalAlignment="center"></Image> -->
+    <TextField hint="Device Code" [(ngModel)]="this.deviceCode"
+        autocorrect="false" autocapitalizationType="none"></TextField>
+    <Button text="Connect" class="submit-button" (tap)="connect()"></Button>
+    <Button text="Start" class="submit-button" (tap)="test()"></Button>
+    <Label text="Device Code: {{ state.socket.deviceCode }}" textWrap="true"></Label>
+    <Label text="Token: {{ state.socket.randomLinkUcode }}" textWrap="true"></Label>
+    <Label text="Connection: {{ state.socket.bIsConnected }}" textWrap="true"></Label>
+    <Label text="Auth: {{ state.socket.bIsAuthenticated }}" textWrap="true"></Label>
+    <Label text="La : {{ state.position.latitude }}" textWrap="true"></Label>
+    <Label text="Lo : {{ state.position.longitude }}" textWrap="true"></Label>
+    <ScrollView (scroll)="onScroll($event)">
+        <Label [text]="stateTemp" textWrap="true"></Label>   
+    </ScrollView>
+    
+    
+    <Label text="5 second" textWrap="true"></Label>
+</StackLayout>

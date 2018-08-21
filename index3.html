@@ -1,0 +1,158 @@
+<html>
+
+
+<script>
+    var count = 0;
+    var fisrt_conn = true;
+    var txtMessage = '';
+    var randomLinkUcode = '';
+
+    try {
+        //document.getElementById("demo").innerHTML = '12111';
+
+        // var conn = new WebSocket('ws://122.61.173.180');
+        console.log('try connect ws://192.168.99.100:8080/Socket');
+        var conn = new WebSocket('ws://192.168.99.100:8080/Socket');
+        //document.getElementById("demo").innerHTML = '2222';
+    }
+    catch (err) {
+        //document.getElementById("demo").innerHTML = err.message;
+    }
+
+
+    conn.onopen = function (e) {
+        console.log("Connection established!");
+        if (fisrt_conn) {
+            document.getElementById("demo").innerHTML = 'yeah!!';
+        }
+        let sendData = { 
+            command: 'AUTH',
+            send_to: 'ALL', 
+            device_type: 'MOBILE_GPS', 
+            device_code: '100010',
+            random_link_ucode: '20277f00-536a-11e8-8f2f-0242ac150002',
+            message: '' 
+        }
+        conn.send(JSON.stringify(sendData));
+    };
+
+    conn.onmessage = function (e) {
+        console.log(e.data);
+        txtMessage = e.data + '<br>' + txtMessage;
+        document.getElementById("demo").innerHTML = txtMessage;
+        let response = JSON.parse(e.data);
+        if(response.command == 'AUTH') {
+            if(response.message.indexOf('OK') > -1) {
+                if(response.hasOwnProperty('data'))
+                randomLinkUcode = response.data.random_link_ucode;
+                ready();               
+            }
+        }
+    };
+
+    conn.onerror = function (event) {
+        console.log(event.message);
+    };
+
+    conn.onclose = function (event) {
+
+    };
+
+    function sentText() {
+        conn.send(document.getElementById("Txt").value);
+    }
+
+    function ready() {
+      window.setInterval(() => {
+        sendMessage();
+      }, 1000)
+    }
+
+    var lo = getRandomFloat(172, 172.5);
+    function sendMessage() {
+        console.log('sendMessage');
+        count++;
+        
+        let position = { position: {latitude: -43.4 - count/1000, longitude: lo + count/50000}, name: 'Super Car'}
+        let obj = { command: 'MESSAGE', send_to: '', device_type: 'MOBILE_GPS', device_code: '100010', random_link_code: randomLinkUcode, message: position };
+
+        conn.send(JSON.stringify(obj));
+    }
+
+    function getRandomFloat(min, max) {
+    return Math.random() * (max - min) + min;
+    }
+
+    function sendAuth() {
+        //conn.send(document.getElementById("Txt").value);
+        console.log('xxxauth');
+        let sendData = { 
+            command: 'AUTH',
+            send_to: 'ALL', 
+            device_type: 'MOBILE_GPS', 
+            device_code: document.getElementById("Txt").value,
+            random_link_ucode: '8753f3ac-3b23-11e8-ab28-0242ac150002',
+            message: '' 
+        }
+        console.log(sendData);
+        conn.send(JSON.stringify(sendData));
+    }
+
+</script>
+
+
+<body>
+
+<h3>GPS Device faker</h3>
+
+<div>
+  <form action="">
+    <label for="fname"> </label>
+    <input type="text" id="fname" id="Txt" name="Device Code" placeholder="Your code..">
+    <input type="button" value="Submit" onclick="sendAuth()">
+  </form>
+</div>
+
+
+<!-- <input type="text" id="Txt">
+
+<button onclick="sentText()"> sent xxxxxxxxxxxx</button> -->
+
+<div id="mylog"></div>
+<div id="demo"></div>
+
+
+    <style>
+        input[type=text], select {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        input[type=button] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        input[type=button]:hover {
+            background-color: #45a049;
+        }
+        
+        div {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+            width: 50%;
+        }
+    </style>
+</html>
